@@ -14,16 +14,16 @@ const BookCard = ({ book }: BookCardProps) => {
 
   return (
     <motion.div
-      whileHover={{ y: -8, boxShadow: "0 20px 40px -15px hsl(25 40% 12% / 0.2)" }}
-      transition={{ duration: 0.3 }}
-      className="bg-card rounded-lg overflow-hidden border border-border group"
+      whileHover={{ y: -6 }}
+      transition={{ duration: 0.25, ease: "easeOut" }}
+      className="bg-card rounded-lg overflow-hidden border border-border group hover:border-primary/40 hover:shadow-xl hover:shadow-primary/10 transition-[border-color,box-shadow] duration-300"
     >
       <Link to={`/librat/${book.id}`}>
         <div className="aspect-[2/3] overflow-hidden">
           <img
             src={book.cover}
             alt={book.title}
-            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+            className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
             loading="lazy"
           />
         </div>
@@ -31,7 +31,7 @@ const BookCard = ({ book }: BookCardProps) => {
       <div className="p-4">
         <Link to={`/librat/${book.id}`}>
           <p className="text-xs text-primary font-medium mb-1">{book.genre}</p>
-          <h3 className="font-serif font-semibold text-base mb-1 line-clamp-1 hover:text-primary transition-colors">
+          <h3 className="font-serif font-semibold text-base mb-1 line-clamp-1 hover:text-primary transition-colors duration-200">
             {book.title}
           </h3>
           <p className="text-sm text-muted-foreground mb-2">{book.author}</p>

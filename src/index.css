@@ -6,50 +6,51 @@
 
 @layer base {
   :root {
-    --background: 30 25% 93%;
-    --foreground: 24 30% 12%;
+    --background: 25 35% 14%;
+    --foreground: 36 30% 88%;
 
-    --card: 32 22% 88%;
-    --card-foreground: 24 30% 12%;
+    --card: 25 30% 18%;
+    --card-foreground: 36 30% 88%;
 
-    --popover: 32 22% 88%;
-    --popover-foreground: 24 30% 12%;
+    --popover: 25 30% 18%;
+    --popover-foreground: 36 30% 88%;
 
-    --primary: 24 55% 30%;
-    --primary-foreground: 36 30% 95%;
+    --primary: 36 65% 50%;
+    --primary-foreground: 25 40% 10%;
 
-    --secondary: 30 18% 82%;
-    --secondary-foreground: 24 30% 12%;
+    --secondary: 25 25% 24%;
+    --secondary-foreground: 36 30% 88%;
 
-    --muted: 30 14% 85%;
-    --muted-foreground: 24 12% 42%;
+    --muted: 25 20% 22%;
+    --muted-foreground: 30 15% 58%;
 
-    --accent: 30 40% 38%;
+    --accent: 30 50% 40%;
     --accent-foreground: 36 30% 95%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 28 18% 78%;
-    --input: 28 18% 78%;
-    --ring: 24 55% 30%;
+    --border: 28 20% 25%;
+    --input: 28 20% 25%;
+    --ring: 36 65% 50%;
 
     --radius: 0.5rem;
 
-    --sidebar-background: 32 22% 88%;
-    --sidebar-foreground: 24 30% 12%;
-    --sidebar-primary: 24 55% 30%;
-    --sidebar-primary-foreground: 36 30% 95%;
-    --sidebar-accent: 30 14% 85%;
-    --sidebar-accent-foreground: 24 30% 12%;
-    --sidebar-border: 28 18% 78%;
-    --sidebar-ring: 24 55% 30%;
+    --sidebar-background: 25 30% 16%;
+    --sidebar-foreground: 36 30% 88%;
+    --sidebar-primary: 36 65% 50%;
+    --sidebar-primary-foreground: 25 40% 10%;
+    --sidebar-accent: 25 20% 22%;
+    --sidebar-accent-foreground: 36 30% 88%;
+    --sidebar-border: 28 20% 25%;
+    --sidebar-ring: 36 65% 50%;
 
-    --warm-brown: 24 35% 22%;
-    --warm-beige: 32 28% 87%;
-    --burgundy: 24 55% 30%;
-    --forest-green: 30 40% 38%;
-    --paper: 34 30% 91%;
+    --warm-brown: 25 40% 20%;
+    --warm-beige: 30 20% 28%;
+    --burgundy: 36 65% 50%;
+    --forest-green: 30 50% 40%;
+    --paper: 25 28% 16%;
+    --gold: 40 70% 55%;
   }
 }
 
@@ -60,6 +61,7 @@
 
   html {
     overflow-x: hidden;
+    scroll-behavior: smooth;
   }
 
   body {
@@ -88,5 +90,11 @@
   }
   .bg-warm-beige {
     background-color: hsl(var(--warm-beige));
+  }
+  .text-gold {
+    color: hsl(var(--gold));
+  }
+  .bg-gold {
+    background-color: hsl(var(--gold));
   }
 }

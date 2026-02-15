@@ -34,12 +34,13 @@ const Books = () => {
     <div className="min-h-screen bg-background">
       <Navbar />
 
-      <section className="py-12 bg-paper">
+      <section className="py-12 bg-card">
         <div className="container mx-auto px-4 text-center">
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="font-serif text-4xl font-bold mb-4"
+            transition={{ duration: 0.6 }}
+            className="font-serif text-4xl font-bold mb-4 text-gold"
           >
             Librat Tanë
           </motion.h1>
@@ -72,11 +73,11 @@ const Books = () => {
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value)}
-            className="text-sm bg-background border border-border rounded-md px-3 py-2 text-foreground"
+            className="text-sm bg-card border border-border rounded-md px-3 py-2 text-foreground"
           >
             <option value="default">Renditje</option>
-            <option value="price-asc">Çmimi: Ulët → Lartë</option>
-            <option value="price-desc">Çmimi: Lartë → Ulët</option>
+            <option value="price-asc">Çmimi: Ulët &rarr; Lartë</option>
+            <option value="price-desc">Çmimi: Lartë &rarr; Ulët</option>
             <option value="rating">Vlerësimi</option>
           </select>
         </div>
@@ -88,10 +89,10 @@ const Books = () => {
               <motion.div
                 key={book.id}
                 layout
-                initial={{ opacity: 0, scale: 0.9 }}
+                initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.9 }}
-                transition={{ duration: 0.3 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                transition={{ duration: 0.3, ease: "easeOut" }}
               >
                 <BookCard book={book} />
               </motion.div>

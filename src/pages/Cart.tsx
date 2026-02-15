@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Trash2, Plus, Minus, ShoppingBag, ArrowLeft } from "lucide-react";
+import { Trash2, Plus, Minus, ShoppingBag, ArrowLeft, MessageCircle } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -8,6 +8,18 @@ import { Button } from "@/components/ui/button";
 
 const Cart = () => {
   const { items, removeFromCart, updateQuantity, totalPrice, clearCart } = useCart();
+
+  const handleWhatsAppOrder = () => {
+    const bookList = items
+      .map((item) => `${item.book.title} (x${item.quantity})`)
+      .join(", ");
+
+    const message = encodeURIComponent(
+      `Pershendetje, dua te porosis: ${bookList}. Totali: ${totalPrice} Lekë.`
+    );
+
+    window.open(`https://wa.me/355693642606?text=${message}`, "_blank");
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -17,13 +29,19 @@ const Cart = () => {
         <motion.h1
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
           className="font-serif text-3xl font-bold mb-8"
         >
           Shporta
         </motion.h1>
 
         {items.length === 0 ? (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-20">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}
+            className="text-center py-20"
+          >
             <ShoppingBag className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
             <h2 className="font-serif text-xl font-semibold mb-2">Shporta juaj është bosh</h2>
             <p className="text-muted-foreground mb-6">Zbuloni librat tanë dhe shtoni diçka!</p>
@@ -40,6 +58,7 @@ const Cart = () => {
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: -20 }}
+                    transition={{ duration: 0.3, ease: "easeOut" }}
                     className="flex gap-4 bg-card p-4 rounded-lg border border-border"
                   >
                     <img
@@ -54,21 +73,21 @@ const Cart = () => {
                       <div className="flex items-center gap-2 mt-2">
                         <button
                           onClick={() => updateQuantity(item.book.id, item.quantity - 1)}
-                          className="p-1 rounded-md bg-muted hover:bg-border transition-colors"
+                          className="p-1 rounded-md bg-muted hover:bg-border transition-colors duration-200"
                         >
                           <Minus className="h-3.5 w-3.5" />
                         </button>
                         <span className="text-sm font-medium w-6 text-center">{item.quantity}</span>
                         <button
                           onClick={() => updateQuantity(item.book.id, item.quantity + 1)}
-                          className="p-1 rounded-md bg-muted hover:bg-border transition-colors"
+                          className="p-1 rounded-md bg-muted hover:bg-border transition-colors duration-200"
                         >
                           <Plus className="h-3.5 w-3.5" />
                         </button>
                       </div>
                     </div>
                     <div className="flex flex-col items-end justify-between">
-                      <button onClick={() => removeFromCart(item.book.id)} className="text-muted-foreground hover:text-destructive transition-colors">
+                      <button onClick={() => removeFromCart(item.book.id)} className="text-muted-foreground hover:text-destructive transition-colors duration-200">
                         <Trash2 className="h-4 w-4" />
                       </button>
                       <span className="font-bold text-sm">{item.book.price * item.quantity} Lekë</span>
@@ -81,6 +100,7 @@ const Cart = () => {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
               className="bg-card p-6 rounded-lg border border-border h-fit sticky top-24"
             >
               <h2 className="font-serif text-xl font-bold mb-4">Përmbledhje</h2>
@@ -91,14 +111,20 @@ const Cart = () => {
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Transporti</span>
-                  <span className="text-accent">Falas</span>
+                  <span className="text-primary">Falas</span>
                 </div>
                 <div className="border-t border-border pt-2 flex justify-between font-bold">
                   <span>Totali</span>
                   <span>{totalPrice} Lekë</span>
                 </div>
               </div>
-              <Button className="w-full mb-3">Vazhdo me Pagesën</Button>
+              <Button
+                className="w-full mb-3 gap-2 bg-green-700 hover:bg-green-800 text-white"
+                onClick={handleWhatsAppOrder}
+              >
+                <MessageCircle className="h-4 w-4" />
+                Porosit me WhatsApp
+              </Button>
               <Button variant="outline" className="w-full" onClick={clearCart}>Pastro Shportën</Button>
             </motion.div>
           </div>

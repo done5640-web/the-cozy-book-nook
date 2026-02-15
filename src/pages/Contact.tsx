@@ -20,12 +20,13 @@ const Contact = () => {
     <div className="min-h-screen bg-background">
       <Navbar />
 
-      <section className="py-12 bg-paper">
+      <section className="py-12 bg-card">
         <div className="container mx-auto px-4 text-center">
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="font-serif text-4xl font-bold mb-4"
+            transition={{ duration: 0.6 }}
+            className="font-serif text-4xl font-bold mb-4 text-gold"
           >
             Kontaktoni
           </motion.h1>
@@ -38,13 +39,14 @@ const Contact = () => {
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
           >
-            <h2 className="font-serif text-2xl font-bold mb-6">Dërgoni një Mesazh</h2>
+            <h2 className="font-serif text-2xl font-bold mb-6 text-gold">Dërgoni një Mesazh</h2>
             <form onSubmit={handleSubmit} className="space-y-4">
-              <Input placeholder="Emri juaj" required />
-              <Input type="email" placeholder="Email-i juaj" required />
-              <Input placeholder="Subjekti" required />
-              <Textarea placeholder="Mesazhi juaj..." rows={5} required />
+              <Input placeholder="Emri juaj" required className="bg-card border-border" />
+              <Input type="email" placeholder="Email-i juaj" required className="bg-card border-border" />
+              <Input placeholder="Subjekti" required className="bg-card border-border" />
+              <Textarea placeholder="Mesazhi juaj..." rows={5} required className="bg-card border-border" />
               <Button type="submit" className="gap-2 w-full" disabled={sent}>
                 {sent ? (
                   <>
@@ -62,9 +64,10 @@ const Contact = () => {
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
             className="space-y-6"
           >
-            <h2 className="font-serif text-2xl font-bold mb-6">Informacione</h2>
+            <h2 className="font-serif text-2xl font-bold mb-6 text-gold">Informacione</h2>
             <div className="flex gap-3 items-start">
               <MapPin className="h-5 w-5 text-primary mt-0.5 shrink-0" />
               <div>
@@ -76,7 +79,7 @@ const Contact = () => {
               <Phone className="h-5 w-5 text-primary mt-0.5 shrink-0" />
               <div>
                 <p className="font-medium text-sm">Telefoni</p>
-                <p className="text-sm text-muted-foreground">+355 69 123 4567</p>
+                <p className="text-sm text-muted-foreground">+355 69 364 2606</p>
               </div>
             </div>
             <div className="flex gap-3 items-start">

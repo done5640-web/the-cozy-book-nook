@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, ShoppingCart, BookOpen } from "lucide-react";
+import { Menu, X, ShoppingCart } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -17,11 +17,11 @@ const Navbar = () => {
   const { totalItems } = useCart();
 
   return (
-    <nav className="sticky top-0 z-50 bg-background/90 backdrop-blur-md border-b border-border">
+    <nav className="sticky top-0 z-50 bg-background/95 backdrop-blur-md border-b border-border/50">
       <div className="container mx-auto px-4 py-3 flex items-center justify-between">
-        <Link to="/" className="flex items-center gap-2 group">
-          <BookOpen className="h-7 w-7 text-primary transition-transform group-hover:rotate-[-10deg]" />
-          <span className="font-serif text-xl font-bold text-foreground">
+        <Link to="/" className="flex items-center gap-2.5 group">
+          <img src="/logo.svg" alt="Logo" className="h-8 w-8 transition-transform duration-300 group-hover:rotate-[-10deg]" />
+          <span className="font-serif text-xl font-bold text-primary">
             Stacioni i Librarisë
           </span>
         </Link>
@@ -32,7 +32,7 @@ const Navbar = () => {
             <Link
               key={link.to}
               to={link.to}
-              className={`text-sm font-medium transition-colors hover:text-primary relative pb-1 ${
+              className={`text-sm font-medium transition-colors duration-200 hover:text-primary relative pb-1 ${
                 location.pathname === link.to
                   ? "text-primary after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-primary"
                   : "text-muted-foreground"
@@ -44,12 +44,13 @@ const Navbar = () => {
         </div>
 
         <div className="flex items-center gap-3">
-          <Link to="/shporta" className="relative p-2 rounded-full hover:bg-muted transition-colors">
+          <Link to="/shporta" className="relative p-2 rounded-full hover:bg-muted transition-colors duration-200">
             <ShoppingCart className="h-5 w-5 text-foreground" />
             {totalItems > 0 && (
               <motion.span
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
+                transition={{ type: "spring", stiffness: 300, damping: 20 }}
                 className="absolute -top-1 -right-1 bg-primary text-primary-foreground text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold"
               >
                 {totalItems}
@@ -59,7 +60,7 @@ const Navbar = () => {
 
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className="md:hidden p-2 rounded-full hover:bg-muted transition-colors"
+            className="md:hidden p-2 rounded-full hover:bg-muted transition-colors duration-200"
             aria-label="Toggle menu"
           >
             {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -74,7 +75,8 @@ const Navbar = () => {
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            className="md:hidden overflow-hidden border-t border-border"
+            transition={{ duration: 0.25, ease: "easeInOut" }}
+            className="md:hidden overflow-hidden border-t border-border/50"
           >
             <div className="container mx-auto px-4 py-4 flex flex-col gap-3">
               {navLinks.map((link) => (
@@ -82,7 +84,7 @@ const Navbar = () => {
                   key={link.to}
                   to={link.to}
                   onClick={() => setIsOpen(false)}
-                  className={`text-sm font-medium py-2 px-3 rounded-md transition-colors ${
+                  className={`text-sm font-medium py-2 px-3 rounded-md transition-colors duration-200 ${
                     location.pathname === link.to
                       ? "bg-primary text-primary-foreground"
                       : "text-muted-foreground hover:bg-muted"

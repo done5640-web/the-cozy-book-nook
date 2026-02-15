@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
+  <rect width="32" height="32" rx="6" fill="#3D2814"/>
+  <rect x="4" y="5" width="10" height="22" rx="1.5" fill="#5A3A1A" stroke="#C8943E" stroke-width="0.8"/>
+  <rect x="18" y="5" width="10" height="22" rx="1.5" fill="#5A3A1A" stroke="#C8943E" stroke-width="0.8"/>
+  <path d="M14 5 L16 3 L18 5" fill="#C8943E"/>
+  <text x="16" y="22" text-anchor="middle" font-family="serif" font-size="7" font-weight="bold" fill="#C8943E">SL</text>
+</svg>
