@@ -41,14 +41,14 @@ const Navbar = () => {
     <>
       <nav className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-md border-b border-border/50">
         <div className="container mx-auto px-4 py-3 flex items-center justify-between">
-          <a href="/" onClick={handleLogoClick} className="flex items-center gap-3 group">
-            <img src="/logo-libraria.png" alt="Stacioni i Librarisë" className="h-10 w-auto transition-transform duration-300 group-hover:scale-105" />
-            <span className="font-brand text-lg font-semibold text-primary tracking-wider uppercase hidden sm:inline">
+          <a href="/" onClick={handleLogoClick} className="flex items-center gap-3 group shrink-0">
+            <img src="/logo-libraria.png" alt="Stacioni i Librarisë" className="h-7 w-auto transition-transform duration-300 group-hover:scale-105" />
+            <span className="font-brand text-xs sm:text-lg font-semibold text-primary tracking-wider uppercase">
               Stacioni i Librarisë
             </span>
           </a>
 
-          {/* Desktop nav */}
+          {/* Desktop nav + cart grouped together */}
           <div className="hidden md:flex items-center gap-8">
             {navLinks.map((link) => (
               <button
@@ -63,9 +63,23 @@ const Navbar = () => {
                 {link.label}
               </button>
             ))}
+            <Link to="/shporta" className="relative p-2 rounded-full hover:bg-muted transition-colors duration-200 ml-2">
+              <ShoppingCart className="h-5 w-5 text-foreground" />
+              {totalItems > 0 && (
+                <motion.span
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                  className="absolute -top-1 -right-1 bg-primary text-primary-foreground text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold"
+                >
+                  {totalItems}
+                </motion.span>
+              )}
+            </Link>
           </div>
 
-          <div className="flex items-center gap-3">
+          {/* Mobile: cart + hamburger */}
+          <div className="flex md:hidden items-center gap-2">
             <Link to="/shporta" className="relative p-2 rounded-full hover:bg-muted transition-colors duration-200">
               <ShoppingCart className="h-5 w-5 text-foreground" />
               {totalItems > 0 && (
@@ -79,10 +93,9 @@ const Navbar = () => {
                 </motion.span>
               )}
             </Link>
-
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="md:hidden p-2 rounded-full hover:bg-muted transition-colors duration-200"
+              className="p-2 rounded-full hover:bg-muted transition-colors duration-200"
               aria-label="Toggle menu"
             >
               {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -119,7 +132,6 @@ const Navbar = () => {
           )}
         </AnimatePresence>
       </nav>
-      {/* Spacer to prevent content from being hidden behind fixed navbar */}
       <div className="h-16" />
     </>
   );

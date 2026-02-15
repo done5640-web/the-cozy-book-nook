@@ -11,7 +11,7 @@ const FloatingCart = () => {
   if (["/shporta", "/admin", "/login"].includes(location.pathname)) return null;
 
   return (
-    <div className="fixed bottom-6 right-6 z-[60] md:hidden">
+    <div className="fixed bottom-6 right-6 z-[60]">
       <Link
         to="/shporta"
         className="flex items-center justify-center w-14 h-14 bg-primary text-primary-foreground rounded-full shadow-lg shadow-primary/30 hover:scale-105 active:scale-95 transition-transform duration-200"

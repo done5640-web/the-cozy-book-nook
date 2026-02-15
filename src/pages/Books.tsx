@@ -1,8 +1,8 @@
 import { useState, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { genres } from "@/data/books";
 import { useBooks } from "@/hooks/use-books";
+import { useCategories } from "@/hooks/use-categories";
 import BookCard from "@/components/BookCard";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 
 const Books = () => {
   const { books } = useBooks();
+  const { categories } = useCategories();
   const [searchParams, setSearchParams] = useSearchParams();
   const [selectedGenre, setSelectedGenre] = useState(searchParams.get("genre") || "Të gjitha");
   const [sortBy, setSortBy] = useState("default");
@@ -40,7 +41,7 @@ const Books = () => {
       <section className="relative py-16 overflow-hidden -mt-16 pt-28">
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{ backgroundImage: "url('https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=1920&q=80')" }}
+          style={{ backgroundImage: "url('https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=1280&q=40')" }}
         />
         <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-background" />
         <div className="absolute inset-0 bg-[#6B2D2D]/20" />
@@ -68,7 +69,7 @@ const Books = () => {
             >
               Të gjitha
             </Button>
-            {genres.map((genre) => (
+            {categories.map((genre) => (
               <Button
                 key={genre}
                 variant={selectedGenre === genre ? "default" : "outline"}

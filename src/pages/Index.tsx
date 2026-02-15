@@ -1,8 +1,8 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowRight, BookOpen } from "lucide-react";
-import { genres } from "@/data/books";
 import { useBooks } from "@/hooks/use-books";
+import { useCategories } from "@/hooks/use-categories";
 import BookCard from "@/components/BookCard";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -19,6 +19,7 @@ const fadeUp = {
 
 const Index = () => {
   const { books, featuredBooks } = useBooks();
+  const { categories } = useCategories();
 
   return (
     <div className="min-h-screen bg-background">
@@ -28,7 +29,7 @@ const Index = () => {
       <section className="relative overflow-hidden min-h-[70vh] md:min-h-[80vh] flex items-center -mt-16 pt-16">
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat scale-105"
-          style={{ backgroundImage: "url('https://images.unsplash.com/photo-1507842217343-583bb7270b66?w=1920&q=80')" }}
+          style={{ backgroundImage: "url('https://images.unsplash.com/photo-1507842217343-583bb7270b66?w=1280&q=40')" }}
         />
         <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-background" />
         <div className="absolute inset-0 bg-[#6B2D2D]/40" />
@@ -135,7 +136,7 @@ const Index = () => {
             <p className="text-muted-foreground">Gjeni zhanrin tuaj të preferuar</p>
           </motion.div>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-            {genres.map((genre, i) => {
+            {categories.map((genre, i) => {
               const genreBookCount = books.filter(b => b.genre === genre).length;
               return (
                 <motion.div

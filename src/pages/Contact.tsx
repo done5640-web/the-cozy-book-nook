@@ -24,7 +24,7 @@ const Contact = () => {
       <section className="relative py-16 overflow-hidden -mt-16 pt-28">
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{ backgroundImage: "url('https://images.unsplash.com/photo-1457369804613-52c61a468e7d?w=1920&q=80')" }}
+          style={{ backgroundImage: "url('https://images.unsplash.com/photo-1457369804613-52c61a468e7d?w=1280&q=40')" }}
         />
         <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-background" />
         <div className="absolute inset-0 bg-[#6B2D2D]/20" />

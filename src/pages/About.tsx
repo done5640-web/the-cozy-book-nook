@@ -16,7 +16,7 @@ const About = () => {
       <section className="relative py-28 overflow-hidden -mt-16 pt-36">
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{ backgroundImage: "url('https://images.unsplash.com/photo-1521587760476-6c12a4b040da?w=1920&q=80')" }}
+          style={{ backgroundImage: "url('https://images.unsplash.com/photo-1521587760476-6c12a4b040da?w=1280&q=40')" }}
         />
         <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-background" />
         <div className="absolute inset-0 bg-[#6B2D2D]/20" />
@@ -57,14 +57,17 @@ const About = () => {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="rounded-lg overflow-hidden aspect-[4/3]"
+            className="rounded-xl overflow-hidden aspect-[4/3] bg-gradient-to-br from-[#6B2D2D] via-[#4A1E1E] to-[#2D0F0F] flex flex-col items-center justify-center p-8 border border-primary/20"
           >
             <img
-              src="https://images.unsplash.com/photo-1524578271613-d550eacf6090?w=800&q=80"
-              alt="Libra"
-              className="w-full h-full object-cover"
-              loading="lazy"
+              src="/logo-libraria.png"
+              alt="Stacioni i Librarisë"
+              className="h-24 w-auto mb-6 opacity-90"
             />
+            <h3 className="font-brand text-xl sm:text-2xl font-bold text-primary tracking-wider uppercase text-center mb-2">
+              Stacioni i Librarisë
+            </h3>
+            <p className="text-sm text-white/60 italic text-center">Uncover a world of imagination</p>
           </motion.div>
         </div>
       </section>
@@ -116,14 +119,23 @@ const About = () => {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="rounded-lg overflow-hidden aspect-[4/3] md:order-1"
+            className="rounded-xl overflow-hidden aspect-[4/3] bg-gradient-to-br from-[#1E1410] via-[#2D1A14] to-[#6B2D2D]/30 flex flex-col items-center justify-center p-8 border border-border md:order-1"
           >
-            <img
-              src="https://images.unsplash.com/photo-1532012197267-da84d127e765?w=800&q=80"
-              alt="Lexim"
-              className="w-full h-full object-cover"
-              loading="lazy"
-            />
+            <div className="grid grid-cols-2 gap-3 mb-4">
+              <div className="w-16 h-20 rounded-lg bg-primary/15 border border-primary/20 flex items-center justify-center">
+                <span className="text-2xl">📖</span>
+              </div>
+              <div className="w-16 h-20 rounded-lg bg-primary/15 border border-primary/20 flex items-center justify-center">
+                <span className="text-2xl">📦</span>
+              </div>
+              <div className="w-16 h-20 rounded-lg bg-primary/15 border border-primary/20 flex items-center justify-center">
+                <span className="text-2xl">💬</span>
+              </div>
+              <div className="w-16 h-20 rounded-lg bg-primary/15 border border-primary/20 flex items-center justify-center">
+                <span className="text-2xl">🚚</span>
+              </div>
+            </div>
+            <p className="text-sm text-muted-foreground text-center font-medium">Shfletoni • Zgjidhni • Porosisni • Merrni</p>
           </motion.div>
           <motion.div
             initial={{ opacity: 0, x: 20 }}
