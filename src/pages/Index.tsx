@@ -29,7 +29,7 @@ const Index = () => {
       <section className="relative overflow-hidden min-h-[70vh] md:min-h-[80vh] flex items-center -mt-16 pt-16">
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat scale-105"
-          style={{ backgroundImage: "url('https://images.unsplash.com/photo-1507842217343-583bb7270b66?w=1280&q=40')" }}
+          style={{ backgroundColor: "#2D1510", backgroundImage: "url('https://images.unsplash.com/photo-1507842217343-583bb7270b66?w=1024&q=30')" }}
         />
         <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-background" />
         <div className="absolute inset-0 bg-[#6B2D2D]/40" />

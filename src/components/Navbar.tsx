@@ -41,9 +41,9 @@ const Navbar = () => {
     <>
       <nav className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-md border-b border-border/50">
         <div className="container mx-auto px-4 py-3 flex items-center justify-between">
-          <a href="/" onClick={handleLogoClick} className="flex items-center gap-3 group shrink-0">
-            <img src="/logo-libraria.png" alt="Stacioni i Librarisë" className="h-7 w-auto transition-transform duration-300 group-hover:scale-105" />
-            <span className="font-brand text-xs sm:text-lg font-semibold text-primary tracking-wider uppercase">
+          <a href="/" onClick={handleLogoClick} className="flex items-center gap-2 sm:gap-3 group shrink-0">
+            <img src="/logo-libraria.png" alt="Stacioni i Librarisë" className="h-6 sm:h-7 w-auto shrink-0 transition-transform duration-300 group-hover:scale-105" />
+            <span className="font-brand text-[10px] sm:text-sm md:text-lg font-semibold text-primary tracking-wider uppercase leading-none translate-y-[1px]">
               Stacioni i Librarisë
             </span>
           </a>

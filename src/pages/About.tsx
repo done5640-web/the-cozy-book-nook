@@ -16,7 +16,7 @@ const About = () => {
       <section className="relative py-28 overflow-hidden -mt-16 pt-36">
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{ backgroundImage: "url('https://images.unsplash.com/photo-1521587760476-6c12a4b040da?w=1280&q=40')" }}
+          style={{ backgroundColor: "#2D1510", backgroundImage: "url('https://images.unsplash.com/photo-1521587760476-6c12a4b040da?w=1024&q=30')" }}
         />
         <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-background" />
         <div className="absolute inset-0 bg-[#6B2D2D]/20" />
