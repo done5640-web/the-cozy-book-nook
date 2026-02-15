@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
-import { genres as fallbackGenres } from "@/data/books";
 
 export interface DbCategory {
   id: string;
@@ -9,7 +8,7 @@ export interface DbCategory {
 }
 
 export function useCategories() {
-  const [categories, setCategories] = useState<string[]>(fallbackGenres);
+  const [categories, setCategories] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -20,11 +19,11 @@ export function useCategories() {
           .select("*")
           .order("name", { ascending: true });
 
-        if (!error && data && data.length > 0) {
+        if (!error && data) {
           setCategories(data.map((c: DbCategory) => c.name));
         }
       } catch {
-        // fallback to local genres
+        // Supabase not reachable
       }
       setLoading(false);
     };
