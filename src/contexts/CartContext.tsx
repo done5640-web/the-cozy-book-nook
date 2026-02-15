@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
-import { Book } from "@/data/books";
+import { Book, discountedPrice } from "@/data/books";
 
 interface CartItem {
   book: Book;
@@ -57,7 +57,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   const clearCart = () => setItems([]);
 
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
-  const totalPrice = items.reduce((sum, item) => sum + item.book.price * item.quantity, 0);
+  const totalPrice = items.reduce((sum, item) => sum + discountedPrice(item.book) * item.quantity, 0);
 
   return (
     <CartContext.Provider value={{ items, addToCart, removeFromCart, updateQuantity, clearCart, totalItems, totalPrice }}>

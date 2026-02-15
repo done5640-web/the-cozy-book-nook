@@ -15,6 +15,7 @@ interface DbBook {
   title: string;
   author: string;
   price: number;
+  discount: number;
   genre: string;
   description: string;
   rating: number;
@@ -42,6 +43,7 @@ const Admin = () => {
   const [deletingBook, setDeletingBook] = useState<string | null>(null);
   const [uploadingImage, setUploadingImage] = useState(false);
   const [priceInput, setPriceInput] = useState("");
+  const [discountInput, setDiscountInput] = useState("");
 
   // Categories state
   const [categories, setCategories] = useState<DbCategory[]>([]);
@@ -88,9 +90,10 @@ const Admin = () => {
     if (!editingBook?.title || !editingBook?.author || !editingBook?.cover) return;
     setSavingBook(true);
     if (isNewBook) {
-      const { title, author, price, genre, description, cover, featured } = editingBook;
+      const { title, author, price, discount, genre, description, cover, featured } = editingBook;
       await supabase.from("books").insert([{
-        title, author, price: price || 0, genre: genre || (categories[0]?.name || ""),
+        title, author, price: price || 0, discount: discount || 0,
+        genre: genre || (categories[0]?.name || ""),
         description: description || "", rating: 0, cover, featured: featured || false,
       }]);
     } else {
@@ -240,7 +243,7 @@ const Admin = () => {
                 <h2 className="font-serif text-2xl font-bold text-gold">Menaxho Librat</h2>
                 <p className="text-sm text-muted-foreground">{books.length} libra gjithsej</p>
               </div>
-              <Button onClick={() => { setEditingBook({ title: "", author: "", price: 0, genre: catNames[0] || "", description: "", cover: "", featured: false }); setPriceInput(""); setIsNewBook(true); }} className="gap-2">
+              <Button onClick={() => { setEditingBook({ title: "", author: "", price: 0, discount: 0, genre: catNames[0] || "", description: "", cover: "", featured: false }); setPriceInput(""); setDiscountInput(""); setIsNewBook(true); }} className="gap-2">
                 <Plus className="h-4 w-4" /> Shto Libër
               </Button>
             </div>
@@ -285,6 +288,28 @@ const Admin = () => {
                           placeholder="0"
                           className="bg-background [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                         />
+                      </div>
+                      <div>
+                        <label className="text-sm font-medium mb-1 block">Zbritja (%)</label>
+                        <Input
+                          type="text"
+                          inputMode="numeric"
+                          value={discountInput}
+                          onChange={(e) => {
+                            const raw = e.target.value.replace(/[^0-9]/g, "");
+                            const clamped = Math.min(100, parseInt(raw, 10) || 0);
+                            setDiscountInput(raw === "" ? "" : String(clamped));
+                            setEditingBook({ ...editingBook, discount: clamped });
+                          }}
+                          onFocus={(e) => e.target.select()}
+                          placeholder="0"
+                          className="bg-background [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                        />
+                        {(editingBook.discount ?? 0) > 0 && (editingBook.price ?? 0) > 0 && (
+                          <p className="text-xs text-primary mt-1">
+                            Çmimi me zbritje: <span className="font-bold">{Math.round((editingBook.price ?? 0) * (1 - (editingBook.discount ?? 0) / 100))} Lekë</span>
+                          </p>
+                        )}
                       </div>
                       <div>
                         <label className="text-sm font-medium mb-1 block">Kategoria</label>
@@ -358,7 +383,7 @@ const Admin = () => {
                       <button onClick={() => toggleFeatured(book)} className={`p-2 rounded-lg transition-colors ${book.featured ? "text-primary bg-primary/10 hover:bg-primary/20" : "text-muted-foreground hover:bg-muted"}`} title={book.featured ? "Hiq nga Kreu" : "Shto në Kreu"}>
                         {book.featured ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
                       </button>
-                      <button onClick={() => { setEditingBook({ ...book }); setPriceInput(String(book.price ?? "")); setIsNewBook(false); }} className="p-2 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors" title="Ndrysho"><Pencil className="h-4 w-4" /></button>
+                      <button onClick={() => { setEditingBook({ ...book }); setPriceInput(String(book.price ?? "")); setDiscountInput(String(book.discount ?? "")); setIsNewBook(false); }} className="p-2 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors" title="Ndrysho"><Pencil className="h-4 w-4" /></button>
                       <button onClick={() => handleDeleteBook(book.id)} disabled={deletingBook === book.id} className="p-2 rounded-lg text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors" title="Fshi">
                         {deletingBook === book.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
                       </button>

@@ -38,7 +38,7 @@ const Login = () => {
   };
 
   return (
-    <div className="h-screen overflow-hidden bg-background flex items-center justify-center px-4">
+    <div className="h-[100svh] overflow-hidden bg-background flex items-center justify-center px-4">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}

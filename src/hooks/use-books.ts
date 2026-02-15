@@ -8,6 +8,7 @@ interface DbBook {
   title: string;
   author: string;
   price: number;
+  discount: number;
   genre: string;
   description: string;
   rating: number;
@@ -22,6 +23,7 @@ function dbToBook(db: DbBook): Book {
     title: db.title,
     author: db.author,
     price: db.price,
+    discount: db.discount ?? 0,
     genre: db.genre,
     description: db.description,
     rating: db.rating,

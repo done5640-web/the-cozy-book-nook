@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ShoppingCart } from "lucide-react";
-import { Book } from "@/data/books";
+import { Book, discountedPrice } from "@/data/books";
 import { useCart } from "@/contexts/CartContext";
 import { Button } from "@/components/ui/button";
 
@@ -37,7 +37,16 @@ const BookCard = ({ book }: BookCardProps) => {
           <p className="text-xs md:text-sm text-muted-foreground mb-2">{book.author}</p>
         </Link>
         <div className="flex items-center justify-between gap-1 min-w-0">
-          <span className="font-bold text-sm md:text-base text-foreground truncate shrink">{book.price} Lekë</span>
+          <div className="flex flex-col min-w-0 shrink">
+            {book.discount > 0 ? (
+              <>
+                <span className="font-bold text-sm md:text-base text-foreground leading-tight">{discountedPrice(book)} Lekë</span>
+                <span className="text-xs text-muted-foreground line-through leading-tight">{book.price} Lekë</span>
+              </>
+            ) : (
+              <span className="font-bold text-sm md:text-base text-foreground truncate">{book.price} Lekë</span>
+            )}
+          </div>
           <Button
             size="sm"
             onClick={(e) => {

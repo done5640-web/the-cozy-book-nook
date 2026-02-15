@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { ArrowLeft, ShoppingCart } from "lucide-react";
 import { useBooks } from "@/hooks/use-books";
 import { useCart } from "@/contexts/CartContext";
+import { discountedPrice } from "@/data/books";
 import BookCard from "@/components/BookCard";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -64,7 +65,19 @@ const BookDetails = () => {
             <p className="text-muted-foreground leading-relaxed mb-8">{book.description}</p>
 
             <div className="flex items-center gap-4 mb-8">
-              <span className="font-serif text-3xl font-bold text-foreground">{book.price} Lekë</span>
+              <div className="flex flex-col">
+                {book.discount > 0 ? (
+                  <>
+                    <div className="flex items-center gap-2">
+                      <span className="font-serif text-3xl font-bold text-foreground">{discountedPrice(book)} Lekë</span>
+                      <span className="bg-primary text-primary-foreground text-xs font-bold px-2 py-0.5 rounded-full">-{book.discount}%</span>
+                    </div>
+                    <span className="text-muted-foreground text-base line-through">{book.price} Lekë</span>
+                  </>
+                ) : (
+                  <span className="font-serif text-3xl font-bold text-foreground">{book.price} Lekë</span>
+                )}
+              </div>
               <Button size="lg" onClick={() => addToCart(book)} className="gap-2">
                 <ShoppingCart className="h-4 w-4" /> Shto në Shportë
               </Button>

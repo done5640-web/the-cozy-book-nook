@@ -3,11 +3,18 @@ export interface Book {
   title: string;
   author: string;
   price: number;
+  discount: number; // percentage 0-100, e.g. 10 = 10% off
   genre: string;
   description: string;
   rating: number;
   reviews: { name: string; rating: number; comment: string }[];
   cover: string;
+}
+
+/** Returns the final price after discount */
+export function discountedPrice(book: Book): number {
+  if (!book.discount || book.discount <= 0) return book.price;
+  return Math.round(book.price * (1 - book.discount / 100));
 }
 
 export const genres = ["Romancë", "Mister", "Fantazi", "Histori", "Zhvillim Personal"];
@@ -18,6 +25,7 @@ export const books: Book[] = [
     title: "Dashuria në Kohë Lufte",
     author: "Ismail Kadare",
     price: 1200,
+    discount: 0,
     genre: "Romancë",
     description: "Një histori dashurie e thellë që zhvillohet gjatë viteve të luftës, ku dy shpirtra gjejnë njëri-tjetrin mes kaosit. Romani eksploron fuqinë e dashurisë për të mbijetuar edhe në kohërat më të errëta.",
     rating: 4.5,
@@ -32,6 +40,7 @@ export const books: Book[] = [
     title: "Misteri i Kalasë",
     author: "Fatos Kongoli",
     price: 950,
+    discount: 0,
     genre: "Mister",
     description: "Një mister i errët që fshihet pas mureve të një kalaje antike. Kur një historian i ri zbulon një dorëshkrim të hershëm, ai hyn në një rrjet intrigash që kërcënon jetën e tij.",
     rating: 4.2,
@@ -46,6 +55,7 @@ export const books: Book[] = [
     title: "Bota e Fshehur",
     author: "Elvira Dones",
     price: 1100,
+    discount: 0,
     genre: "Fantazi",
     description: "Një aventurë fantastike ku një vajzë e re zbulon një portal drejt një bote magjike. Aty ajo duhet të mësojë sekretet e magjisë për të shpëtuar të dy botët nga errësira.",
     rating: 4.7,
@@ -60,6 +70,7 @@ export const books: Book[] = [
     title: "Rrugëtimi i Skënderbeut",
     author: "Sabri Godo",
     price: 1350,
+    discount: 0,
     genre: "Histori",
     description: "Një rrëfim epik i jetës së Gjergj Kastriotit Skënderbeut, heroit kombëtar shqiptar. Nga fëmijëria në oborrin osmane deri te betejat heroike për liri.",
     rating: 4.8,
@@ -74,6 +85,7 @@ export const books: Book[] = [
     title: "Mendja e Lirë",
     author: "Dritëro Agolli",
     price: 850,
+    discount: 0,
     genre: "Zhvillim Personal",
     description: "Një udhëzues praktik për të çliruar mendjen nga kufizimet dhe për të arritur potencialin tuaj të plotë. Me teknika të provuara dhe histori frymëzuese.",
     rating: 4.3,
@@ -88,6 +100,7 @@ export const books: Book[] = [
     title: "Netët e Tiranës",
     author: "Ben Blushi",
     price: 1050,
+    discount: 0,
     genre: "Romancë",
     description: "Një romancë pasionante që zhvillohet në rrugët e Tiranës moderne. Dy persona me rrugëtime të ndryshme jetësore kryqëzohen në mënyrë të papritur.",
     rating: 4.1,
@@ -101,6 +114,7 @@ export const books: Book[] = [
     title: "Kodi i Humbur",
     author: "Gazmend Kapllani",
     price: 980,
+    discount: 0,
     genre: "Mister",
     description: "Një thriller intelektual ku një kriptograf duhet të deshifrojë një kod antik për të parandaluar një katastrofë. Çdo faqe zbulon një enigmë të re.",
     rating: 4.4,
@@ -115,6 +129,7 @@ export const books: Book[] = [
     title: "Fuqia e Zakoneve",
     author: "Ornela Vorpsi",
     price: 780,
+    discount: 0,
     genre: "Zhvillim Personal",
     description: "Si të ndërtoni zakone të shëndetshme dhe si të eliminoni ato të dëmshme. Një qasje shkencore dhe praktike për ndryshimin personal.",
     rating: 4.6,

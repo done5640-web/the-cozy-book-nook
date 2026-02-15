@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Trash2, Plus, Minus, ShoppingBag, ArrowLeft, MessageCircle } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
+import { discountedPrice } from "@/data/books";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -69,7 +70,17 @@ const Cart = () => {
                     <div className="flex-1 min-w-0">
                       <h3 className="font-serif font-semibold text-sm line-clamp-1">{item.book.title}</h3>
                       <p className="text-xs text-muted-foreground">{item.book.author}</p>
-                      <p className="font-bold mt-2">{item.book.price} Lekë</p>
+                      <div className="mt-2">
+                        {item.book.discount > 0 ? (
+                          <div className="flex items-center gap-2">
+                            <p className="font-bold">{discountedPrice(item.book)} Lekë</p>
+                            <span className="text-xs bg-primary text-primary-foreground px-1.5 py-0.5 rounded-full font-bold">-{item.book.discount}%</span>
+                            <p className="text-xs text-muted-foreground line-through">{item.book.price} Lekë</p>
+                          </div>
+                        ) : (
+                          <p className="font-bold">{item.book.price} Lekë</p>
+                        )}
+                      </div>
                       <div className="flex items-center gap-2 mt-2">
                         <button
                           onClick={() => updateQuantity(item.book.id, item.quantity - 1)}
@@ -90,7 +101,7 @@ const Cart = () => {
                       <button onClick={() => removeFromCart(item.book.id)} className="text-muted-foreground hover:text-destructive transition-colors duration-200">
                         <Trash2 className="h-4 w-4" />
                       </button>
-                      <span className="font-bold text-sm">{item.book.price * item.quantity} Lekë</span>
+                      <span className="font-bold text-sm">{discountedPrice(item.book) * item.quantity} Lekë</span>
                     </div>
                   </motion.div>
                 ))}
