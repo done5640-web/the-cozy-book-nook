@@ -40,7 +40,10 @@ const BookCard = ({ book }: BookCardProps) => {
           <div className="flex flex-col min-w-0 shrink">
             {book.discount > 0 ? (
               <>
-                <span className="font-bold text-sm md:text-base text-foreground leading-tight">{discountedPrice(book)} Lekë</span>
+                <div className="flex items-center gap-1 flex-wrap">
+                  <span className="font-bold text-sm md:text-base text-foreground leading-tight">{discountedPrice(book)} Lekë</span>
+                  <span className="bg-primary text-primary-foreground text-[10px] font-bold px-1.5 py-0.5 rounded-full leading-tight shrink-0">-{book.discount}%</span>
+                </div>
                 <span className="text-xs text-muted-foreground line-through leading-tight">{book.price} Lekë</span>
               </>
             ) : (
