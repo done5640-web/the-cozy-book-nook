@@ -28,25 +28,25 @@ const BookCard = ({ book }: BookCardProps) => {
           />
         </div>
       </Link>
-      <div className="p-4">
+      <div className="p-2.5 md:p-4">
         <Link to={`/librat/${book.id}`}>
           <p className="text-xs text-primary font-medium mb-1">{book.genre}</p>
-          <h3 className="font-serif font-semibold text-base mb-1 line-clamp-1 hover:text-primary transition-colors duration-200">
+          <h3 className="font-serif font-semibold text-sm md:text-base mb-1 line-clamp-1 hover:text-primary transition-colors duration-200">
             {book.title}
           </h3>
-          <p className="text-sm text-muted-foreground mb-2">{book.author}</p>
+          <p className="text-xs md:text-sm text-muted-foreground mb-2">{book.author}</p>
         </Link>
         <div className="flex items-center justify-between">
-          <span className="font-bold text-foreground">{book.price} Lekë</span>
+          <span className="font-bold text-sm md:text-base text-foreground">{book.price} Lekë</span>
           <Button
             size="sm"
             onClick={(e) => {
               e.preventDefault();
               addToCart(book);
             }}
-            className="gap-1"
+            className="gap-0.5 md:gap-1 h-7 px-2 text-xs md:h-9 md:px-3 md:text-sm ml-1"
           >
-            <ShoppingCart className="h-3.5 w-3.5" />
+            <ShoppingCart className="h-3 w-3 md:h-3.5 md:w-3.5" />
             Shto
           </Button>
         </div>
