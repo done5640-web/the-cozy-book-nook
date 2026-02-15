@@ -20,17 +20,24 @@ const Contact = () => {
     <div className="min-h-screen bg-background">
       <Navbar />
 
-      <section className="py-12 bg-card">
-        <div className="container mx-auto px-4 text-center">
+      {/* Hero with background */}
+      <section className="relative py-16 overflow-hidden -mt-16 pt-28">
+        <div
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: "url('https://images.unsplash.com/photo-1457369804613-52c61a468e7d?w=1920&q=80')" }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-background" />
+        <div className="absolute inset-0 bg-[#6B2D2D]/20" />
+        <div className="container mx-auto px-4 text-center relative z-10">
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="font-serif text-4xl font-bold mb-4 text-gold"
+            className="font-serif text-4xl font-bold mb-4 text-white drop-shadow-lg"
           >
             Kontaktoni
           </motion.h1>
-          <p className="text-muted-foreground">Na shkruani dhe do ju përgjigjemi sa më shpejt</p>
+          <p className="text-white/70">Na shkruani dhe do ju përgjigjemi sa më shpejt</p>
         </div>
       </section>
 
@@ -69,13 +76,6 @@ const Contact = () => {
           >
             <h2 className="font-serif text-2xl font-bold mb-6 text-gold">Informacione</h2>
             <div className="flex gap-3 items-start">
-              <MapPin className="h-5 w-5 text-primary mt-0.5 shrink-0" />
-              <div>
-                <p className="font-medium text-sm">Adresa</p>
-                <p className="text-sm text-muted-foreground">Rruga e Durrësit, Nr. 45, Tiranë, Shqipëri</p>
-              </div>
-            </div>
-            <div className="flex gap-3 items-start">
               <Phone className="h-5 w-5 text-primary mt-0.5 shrink-0" />
               <div>
                 <p className="font-medium text-sm">Telefoni</p>
@@ -89,12 +89,11 @@ const Contact = () => {
                 <p className="text-sm text-muted-foreground">info@stacioni-librarise.al</p>
               </div>
             </div>
-
-            {/* Map placeholder */}
-            <div className="bg-muted rounded-lg h-48 flex items-center justify-center border border-border mt-6">
-              <div className="text-center">
-                <MapPin className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
-                <p className="text-sm text-muted-foreground">Harta - Tiranë, Shqipëri</p>
+            <div className="flex gap-3 items-start">
+              <MapPin className="h-5 w-5 text-primary mt-0.5 shrink-0" />
+              <div>
+                <p className="font-medium text-sm">Vendndodhja</p>
+                <p className="text-sm text-muted-foreground">Online - Shqipëri</p>
               </div>
             </div>
           </motion.div>

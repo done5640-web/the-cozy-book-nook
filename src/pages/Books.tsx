@@ -1,13 +1,15 @@
 import { useState, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { books, genres } from "@/data/books";
+import { genres } from "@/data/books";
+import { useBooks } from "@/hooks/use-books";
 import BookCard from "@/components/BookCard";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 
 const Books = () => {
+  const { books } = useBooks();
   const [searchParams, setSearchParams] = useSearchParams();
   const [selectedGenre, setSelectedGenre] = useState(searchParams.get("genre") || "Të gjitha");
   const [sortBy, setSortBy] = useState("default");
@@ -18,7 +20,7 @@ const Books = () => {
     if (sortBy === "price-desc") result = [...result].sort((a, b) => b.price - a.price);
     if (sortBy === "rating") result = [...result].sort((a, b) => b.rating - a.rating);
     return result;
-  }, [selectedGenre, sortBy]);
+  }, [books, selectedGenre, sortBy]);
 
   const handleGenre = (genre: string) => {
     setSelectedGenre(genre);
@@ -34,17 +36,24 @@ const Books = () => {
     <div className="min-h-screen bg-background">
       <Navbar />
 
-      <section className="py-12 bg-card">
-        <div className="container mx-auto px-4 text-center">
+      {/* Hero with background */}
+      <section className="relative py-16 overflow-hidden -mt-16 pt-28">
+        <div
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: "url('https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=1920&q=80')" }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-background" />
+        <div className="absolute inset-0 bg-[#6B2D2D]/20" />
+        <div className="container mx-auto px-4 text-center relative z-10">
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="font-serif text-4xl font-bold mb-4 text-gold"
+            className="font-serif text-4xl font-bold mb-4 text-white drop-shadow-lg"
           >
             Librat Tanë
           </motion.h1>
-          <p className="text-muted-foreground">Zbuloni koleksionin tonë të pasur</p>
+          <p className="text-white/70">Zbuloni koleksionin tonë të pasur</p>
         </div>
       </section>
 

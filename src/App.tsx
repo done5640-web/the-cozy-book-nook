@@ -5,12 +5,16 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { CartProvider } from "@/contexts/CartContext";
+import { AuthProvider } from "@/contexts/AuthContext";
+import FloatingCart from "@/components/FloatingCart";
 import Index from "./pages/Index";
 import About from "./pages/About";
 import Books from "./pages/Books";
 import BookDetails from "./pages/BookDetails";
 import Cart from "./pages/Cart";
 import Contact from "./pages/Contact";
+import Login from "./pages/Login";
+import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -28,22 +32,27 @@ const ScrollToTop = () => {
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-      <CartProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <ScrollToTop />
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/rreth-nesh" element={<About />} />
-            <Route path="/librat" element={<Books />} />
-            <Route path="/librat/:id" element={<BookDetails />} />
-            <Route path="/shporta" element={<Cart />} />
-            <Route path="/kontakt" element={<Contact />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </CartProvider>
+      <AuthProvider>
+        <CartProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <ScrollToTop />
+            <FloatingCart />
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/rreth-nesh" element={<About />} />
+              <Route path="/librat" element={<Books />} />
+              <Route path="/librat/:id" element={<BookDetails />} />
+              <Route path="/shporta" element={<Cart />} />
+              <Route path="/kontakt" element={<Contact />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/admin" element={<Admin />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </CartProvider>
+      </AuthProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );

@@ -1,125 +1,162 @@
+import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Heart, Eye, Quote } from "lucide-react";
+import { Quote } from "lucide-react";
+import { useBooks } from "@/hooks/use-books";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
-const timelineEvents = [
-  { year: "2015", title: "Fillimi i Ëndrrës", description: "Ideja për Stacionin e Librarisë lindi nga dashuria për librat shqiptarë." },
-  { year: "2017", title: "Dyqani i Parë", description: "Hapëm dyqanin tonë të parë fizik në qendër të Tiranës." },
-  { year: "2020", title: "Dixhitalizimi", description: "Kaluam në platformën online për të arritur lexues në të gjithë Shqipërinë." },
-  { year: "2023", title: "Komuniteti", description: "Krijuam një komunitet me mbi 10,000 lexues aktivë." },
-  { year: "2026", title: "Sot", description: "Vazhdojmë misionin tonë për të sjellë librat më të mirë tek ju." },
-];
-
 const About = () => {
+  const { books } = useBooks();
+
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
 
-      {/* Hero */}
-      <section className="py-20 bg-card">
-        <div className="container mx-auto px-4">
+      {/* Hero with background image */}
+      <section className="relative py-28 overflow-hidden -mt-16 pt-36">
+        <div
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: "url('https://images.unsplash.com/photo-1521587760476-6c12a4b040da?w=1920&q=80')" }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-background" />
+        <div className="absolute inset-0 bg-[#6B2D2D]/20" />
+        <div className="container mx-auto px-4 relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
             className="max-w-2xl mx-auto text-center"
           >
-            <h1 className="font-serif text-4xl md:text-5xl font-bold mb-6 text-gold">Rreth Nesh</h1>
-            <p className="text-muted-foreground text-lg">
-              Një histori dashurie me librat dhe lexuesit e tyre
-            </p>
+            <h1 className="font-serif text-4xl md:text-5xl font-bold mb-4 text-white drop-shadow-lg">Rreth Nesh</h1>
+            <p className="text-white/80 text-lg">Libraria juaj online shqiptare</p>
           </motion.div>
         </div>
       </section>
 
-      {/* Story */}
+      {/* Who we are - concise */}
       <section className="py-16 container mx-auto px-4">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="max-w-3xl mx-auto"
-        >
-          <h2 className="font-serif text-3xl font-bold mb-6 text-center text-gold">Historia Jonë</h2>
-          <p className="text-muted-foreground leading-relaxed mb-4">
-            Stacioni i Librarisë lindi nga një ëndërr e thjeshtë — të krijojmë një vend ku çdo lexues
-            mund të gjejë librin e tij të ardhshëm të preferuar. Ne besojmë se librat janë ura që lidhin
-            mendjet, zemrat dhe kulturat.
-          </p>
-          <p className="text-muted-foreground leading-relaxed">
-            Çdo libër në koleksionin tonë është zgjedhur me kujdes, duke menduar për lexuesin që do ta
-            hapë për herë të parë. Ne nuk shesim thjesht libra — ne ndajmë histori, dije dhe emocione.
-          </p>
-        </motion.div>
+        <div className="max-w-4xl mx-auto grid md:grid-cols-2 gap-8 items-center">
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+          >
+            <h2 className="font-serif text-3xl font-bold mb-4 text-gold">Kush Jemi</h2>
+            <p className="text-muted-foreground leading-relaxed mb-3">
+              Stacioni i Librarisë është një librari online shqiptare. Ne sjellim librat më
+              të mirë direkt tek dera juaj, kudo në Shqipëri.
+            </p>
+            <p className="text-muted-foreground leading-relaxed">
+              Zgjedhim çdo libër me kujdes dhe e bëjmë porosinë sa më të thjeshtë
+              përmes WhatsApp-it.
+            </p>
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="rounded-lg overflow-hidden aspect-[4/3]"
+          >
+            <img
+              src="https://images.unsplash.com/photo-1524578271613-d550eacf6090?w=800&q=80"
+              alt="Libra"
+              className="w-full h-full object-cover"
+              loading="lazy"
+            />
+          </motion.div>
+        </div>
       </section>
 
-      {/* Timeline */}
+      {/* Our Collection - actual books from data */}
       <section className="py-16 bg-card">
         <div className="container mx-auto px-4">
-          <h2 className="font-serif text-3xl font-bold mb-12 text-center text-gold">Rrugëtimi Ynë</h2>
-          <div className="max-w-2xl mx-auto relative">
-            <div className="absolute left-4 md:left-1/2 top-0 bottom-0 w-0.5 bg-border md:-translate-x-1/2" />
-            {timelineEvents.map((event, i) => (
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="font-serif text-3xl font-bold mb-10 text-center text-gold"
+          >
+            Nga Koleksioni Ynë
+          </motion.h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {books.map((book, i) => (
               <motion.div
-                key={i}
-                initial={{ opacity: 0, x: i % 2 === 0 ? -30 : 30 }}
-                whileInView={{ opacity: 1, x: 0 }}
+                key={book.id}
+                initial={{ opacity: 0, scale: 0.95 }}
+                whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: i * 0.1, ease: "easeOut" }}
-                className={`relative pl-12 md:pl-0 mb-10 ${
-                  i % 2 === 0 ? "md:pr-[55%]" : "md:pl-[55%]"
-                }`}
+                transition={{ duration: 0.5, delay: i * 0.08, ease: "easeOut" }}
               >
-                <div className="absolute left-2 md:left-1/2 top-1 w-5 h-5 rounded-full bg-primary border-4 border-background md:-translate-x-1/2" />
-                <div className="bg-background p-5 rounded-lg border border-border hover:border-primary/30 transition-colors duration-300">
-                  <span className="text-primary font-bold text-sm">{event.year}</span>
-                  <h3 className="font-serif font-semibold mt-1">{event.title}</h3>
-                  <p className="text-sm text-muted-foreground mt-1">{event.description}</p>
-                </div>
+                <Link to={`/librat/${book.id}`} className="block group">
+                  <div className="rounded-lg overflow-hidden aspect-[3/4] mb-2">
+                    <img
+                      src={book.cover}
+                      alt={book.title}
+                      className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+                      loading="lazy"
+                    />
+                  </div>
+                  <h3 className="font-serif text-sm font-semibold group-hover:text-primary transition-colors truncate">{book.title}</h3>
+                  <p className="text-xs text-muted-foreground">{book.author}</p>
+                </Link>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Mission & Vision */}
+      {/* What we offer */}
       <section className="py-16 container mx-auto px-4">
-        <div className="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto">
+        <div className="max-w-4xl mx-auto grid md:grid-cols-2 gap-8 items-center">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            className="bg-card p-8 rounded-lg border border-border text-center hover:border-primary/30 transition-colors duration-300"
+            transition={{ duration: 0.6 }}
+            className="rounded-lg overflow-hidden aspect-[4/3] md:order-1"
           >
-            <Heart className="h-10 w-10 text-primary mx-auto mb-4" />
-            <h3 className="font-serif text-xl font-bold mb-3 text-gold">Misioni Ynë</h3>
-            <p className="text-sm text-muted-foreground">
-              Të sjellim librat më të mirë sa më afër lexuesve shqiptarë, duke krijuar
-              një eksperiencë blerjeje të ngrohtë dhe personale.
-            </p>
+            <img
+              src="https://images.unsplash.com/photo-1532012197267-da84d127e765?w=800&q=80"
+              alt="Lexim"
+              className="w-full h-full object-cover"
+              loading="lazy"
+            />
           </motion.div>
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, x: 20 }}
+            whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="bg-card p-8 rounded-lg border border-border text-center hover:border-primary/30 transition-colors duration-300"
+            transition={{ duration: 0.6 }}
+            className="md:order-2"
           >
-            <Eye className="h-10 w-10 text-primary mx-auto mb-4" />
-            <h3 className="font-serif text-xl font-bold mb-3 text-gold">Vizioni Ynë</h3>
-            <p className="text-sm text-muted-foreground">
-              Një Shqipëri ku çdo njeri ka akses te librat cilësorë dhe ku leximi
-              është pjesë e pandashme e jetës së përditshme.
-            </p>
+            <h2 className="font-serif text-3xl font-bold mb-4 text-gold">Si Funksionon</h2>
+            <ul className="space-y-3 text-muted-foreground">
+              <li className="flex items-start gap-3">
+                <span className="text-primary font-bold text-lg">1.</span>
+                <span>Shfletoni katalogun tonë online</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <span className="text-primary font-bold text-lg">2.</span>
+                <span>Shtoni librat në shportë</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <span className="text-primary font-bold text-lg">3.</span>
+                <span>Porosisni përmes WhatsApp</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <span className="text-primary font-bold text-lg">4.</span>
+                <span>Merrni librat në derë</span>
+              </li>
+            </ul>
           </motion.div>
         </div>
       </section>
 
       {/* Quote */}
-      <section className="py-16 bg-gradient-to-br from-amber-900/40 to-background border-y border-border">
+      <section className="py-16 bg-gradient-to-br from-[#6B2D2D]/40 to-background border-y border-border">
         <div className="container mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
