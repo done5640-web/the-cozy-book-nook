@@ -109,10 +109,6 @@ const Cart = () => {
                   <span className="text-muted-foreground">Nëntotali</span>
                   <span>{totalPrice} Lekë</span>
                 </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Transporti</span>
-                  <span className="text-primary">Falas</span>
-                </div>
                 <div className="border-t border-border pt-2 flex justify-between font-bold">
                   <span>Totali</span>
                   <span>{totalPrice} Lekë</span>
