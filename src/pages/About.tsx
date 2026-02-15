@@ -119,23 +119,14 @@ const About = () => {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="rounded-xl overflow-hidden aspect-[4/3] bg-gradient-to-br from-[#1E1410] via-[#2D1A14] to-[#6B2D2D]/30 flex flex-col items-center justify-center p-8 border border-border md:order-1"
+            className="rounded-lg overflow-hidden aspect-[4/3] md:order-1"
           >
-            <div className="grid grid-cols-2 gap-3 mb-4">
-              <div className="w-16 h-20 rounded-lg bg-primary/15 border border-primary/20 flex items-center justify-center">
-                <span className="text-2xl">📖</span>
-              </div>
-              <div className="w-16 h-20 rounded-lg bg-primary/15 border border-primary/20 flex items-center justify-center">
-                <span className="text-2xl">📦</span>
-              </div>
-              <div className="w-16 h-20 rounded-lg bg-primary/15 border border-primary/20 flex items-center justify-center">
-                <span className="text-2xl">💬</span>
-              </div>
-              <div className="w-16 h-20 rounded-lg bg-primary/15 border border-primary/20 flex items-center justify-center">
-                <span className="text-2xl">🚚</span>
-              </div>
-            </div>
-            <p className="text-sm text-muted-foreground text-center font-medium">Shfletoni • Zgjidhni • Porosisni • Merrni</p>
+            <img
+              src="https://images.unsplash.com/photo-1532012197267-da84d127e765?w=800&q=40"
+              alt="Lexim"
+              className="w-full h-full object-cover"
+              loading="lazy"
+            />
           </motion.div>
           <motion.div
             initial={{ opacity: 0, x: 20 }}
