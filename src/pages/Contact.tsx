@@ -22,9 +22,12 @@ const Contact = () => {
 
       {/* Hero with background */}
       <section className="relative py-16 overflow-hidden -mt-16 pt-28">
-        <div
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{ backgroundColor: "#2D1510", backgroundImage: "url('https://images.unsplash.com/photo-1457369804613-52c61a468e7d?w=1024&q=30')" }}
+        <img
+          src="https://images.unsplash.com/photo-1457369804613-52c61a468e7d?w=1024&q=30"
+          alt=""
+          fetchPriority="high"
+          decoding="async"
+          className="absolute inset-0 w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-background" />
         <div className="absolute inset-0 bg-[#6B2D2D]/20" />
