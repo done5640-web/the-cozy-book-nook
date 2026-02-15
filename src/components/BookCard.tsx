@@ -36,15 +36,15 @@ const BookCard = ({ book }: BookCardProps) => {
           </h3>
           <p className="text-xs md:text-sm text-muted-foreground mb-2">{book.author}</p>
         </Link>
-        <div className="flex items-center justify-between">
-          <span className="font-bold text-sm md:text-base text-foreground">{book.price} Lekë</span>
+        <div className="flex items-center justify-between gap-1 min-w-0">
+          <span className="font-bold text-sm md:text-base text-foreground truncate shrink">{book.price} Lekë</span>
           <Button
             size="sm"
             onClick={(e) => {
               e.preventDefault();
               addToCart(book);
             }}
-            className="gap-0.5 md:gap-1 h-7 px-2 text-xs md:h-9 md:px-3 md:text-sm ml-1"
+            className="gap-0.5 md:gap-1 h-7 px-2 text-xs md:h-9 md:px-3 md:text-sm shrink-0"
           >
             <ShoppingCart className="h-3 w-3 md:h-3.5 md:w-3.5" />
             Shto
