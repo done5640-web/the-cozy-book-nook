@@ -71,7 +71,7 @@ const Index = () => {
               custom={3}
               className="text-sm md:text-base text-white/60 mb-8 max-w-lg mx-auto leading-relaxed"
             >
-              Zbuloni botëra magjike përmes faqeve të librave. Çdo libër është një udhëtim i ri.
+              Libraria juaj e besuar — libra të zgjedhur me kujdes, dorëzuar me dashuri.
             </motion.p>
             <motion.div variants={fadeUp} custom={4}>
               <Link to="/librat">

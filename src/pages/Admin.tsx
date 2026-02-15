@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Plus, Trash2, Pencil, LogOut, Loader2, Save, X, Star, Eye, EyeOff, ImageIcon, Tag, Upload,
@@ -41,6 +41,7 @@ const Admin = () => {
   const [savingBook, setSavingBook] = useState(false);
   const [deletingBook, setDeletingBook] = useState<string | null>(null);
   const [uploadingImage, setUploadingImage] = useState(false);
+  const [priceInput, setPriceInput] = useState("");
 
   // Categories state
   const [categories, setCategories] = useState<DbCategory[]>([]);
@@ -141,16 +142,47 @@ const Admin = () => {
     setDeletingCat(null);
   };
 
+  const compressImage = (file: File, maxWidth = 600, maxHeight = 900, quality = 0.75): Promise<Blob> =>
+    new Promise((resolve, reject) => {
+      const img = new Image();
+      const url = URL.createObjectURL(file);
+      img.onload = () => {
+        URL.revokeObjectURL(url);
+        let { width, height } = img;
+        const ratio = Math.min(maxWidth / width, maxHeight / height, 1);
+        width = Math.round(width * ratio);
+        height = Math.round(height * ratio);
+        const canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = height;
+        canvas.getContext("2d")!.drawImage(img, 0, 0, width, height);
+        canvas.toBlob((blob) => blob ? resolve(blob) : reject(new Error("Compression failed")), "image/webp", quality);
+      };
+      img.onerror = reject;
+      img.src = url;
+    });
+
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     setUploadingImage(true);
-    const fileExt = file.name.split(".").pop();
-    const fileName = `${Date.now()}-${Math.random().toString(36).slice(2)}.${fileExt}`;
-    const { error } = await supabase.storage.from("book-covers").upload(fileName, file);
-    if (!error) {
-      const { data: urlData } = supabase.storage.from("book-covers").getPublicUrl(fileName);
-      setEditingBook((prev) => prev ? { ...prev, cover: urlData.publicUrl } : prev);
+    try {
+      const compressed = await compressImage(file);
+      const fileName = `${Date.now()}-${Math.random().toString(36).slice(2)}.webp`;
+      const { error } = await supabase.storage.from("book-covers").upload(fileName, compressed, { contentType: "image/webp" });
+      if (!error) {
+        const { data: urlData } = supabase.storage.from("book-covers").getPublicUrl(fileName);
+        setEditingBook((prev) => prev ? { ...prev, cover: urlData.publicUrl } : prev);
+      }
+    } catch {
+      // fallback: upload original if compression fails
+      const fileExt = file.name.split(".").pop();
+      const fileName = `${Date.now()}-${Math.random().toString(36).slice(2)}.${fileExt}`;
+      const { error } = await supabase.storage.from("book-covers").upload(fileName, file);
+      if (!error) {
+        const { data: urlData } = supabase.storage.from("book-covers").getPublicUrl(fileName);
+        setEditingBook((prev) => prev ? { ...prev, cover: urlData.publicUrl } : prev);
+      }
     }
     setUploadingImage(false);
   };
@@ -163,7 +195,9 @@ const Admin = () => {
       <div className="bg-card border-b border-border">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <img src="/logo-libraria.png" alt="Logo" className="h-8 w-auto" />
+            <Link to="/" className="shrink-0">
+              <img src="/logo-libraria.png" alt="Logo" className="h-8 w-auto" />
+            </Link>
             <div>
               <h1 className="font-brand text-lg font-bold text-primary uppercase tracking-wider">Admin Panel</h1>
               <p className="text-xs text-muted-foreground">{user.email}</p>
@@ -206,7 +240,7 @@ const Admin = () => {
                 <h2 className="font-serif text-2xl font-bold text-gold">Menaxho Librat</h2>
                 <p className="text-sm text-muted-foreground">{books.length} libra gjithsej</p>
               </div>
-              <Button onClick={() => { setEditingBook({ title: "", author: "", price: 0, genre: catNames[0] || "", description: "", cover: "", featured: false }); setIsNewBook(true); }} className="gap-2">
+              <Button onClick={() => { setEditingBook({ title: "", author: "", price: 0, genre: catNames[0] || "", description: "", cover: "", featured: false }); setPriceInput(""); setIsNewBook(true); }} className="gap-2">
                 <Plus className="h-4 w-4" /> Shto Libër
               </Button>
             </div>
@@ -238,7 +272,19 @@ const Admin = () => {
                       </div>
                       <div>
                         <label className="text-sm font-medium mb-1 block">Çmimi (Lekë)</label>
-                        <Input type="number" value={editingBook.price || 0} onChange={(e) => setEditingBook({ ...editingBook, price: parseInt(e.target.value) || 0 })} className="bg-background" />
+                        <Input
+                          type="text"
+                          inputMode="numeric"
+                          value={priceInput}
+                          onChange={(e) => {
+                            const raw = e.target.value.replace(/[^0-9]/g, "");
+                            setPriceInput(raw);
+                            setEditingBook({ ...editingBook, price: raw === "" ? 0 : parseInt(raw, 10) });
+                          }}
+                          onFocus={(e) => e.target.select()}
+                          placeholder="0"
+                          className="bg-background [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                        />
                       </div>
                       <div>
                         <label className="text-sm font-medium mb-1 block">Kategoria</label>
@@ -312,7 +358,7 @@ const Admin = () => {
                       <button onClick={() => toggleFeatured(book)} className={`p-2 rounded-lg transition-colors ${book.featured ? "text-primary bg-primary/10 hover:bg-primary/20" : "text-muted-foreground hover:bg-muted"}`} title={book.featured ? "Hiq nga Kreu" : "Shto në Kreu"}>
                         {book.featured ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
                       </button>
-                      <button onClick={() => { setEditingBook({ ...book }); setIsNewBook(false); }} className="p-2 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors" title="Ndrysho"><Pencil className="h-4 w-4" /></button>
+                      <button onClick={() => { setEditingBook({ ...book }); setPriceInput(String(book.price ?? "")); setIsNewBook(false); }} className="p-2 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors" title="Ndrysho"><Pencil className="h-4 w-4" /></button>
                       <button onClick={() => handleDeleteBook(book.id)} disabled={deletingBook === book.id} className="p-2 rounded-lg text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors" title="Fshi">
                         {deletingBook === book.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
                       </button>

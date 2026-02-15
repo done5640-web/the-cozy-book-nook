@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import { books as fallbackBooks, type Book } from "@/data/books";
+import { optimizeBookCover } from "@/lib/utils";
 
 interface DbBook {
   id: string;
@@ -24,7 +25,7 @@ function dbToBook(db: DbBook): Book {
     genre: db.genre,
     description: db.description,
     rating: db.rating,
-    cover: db.cover,
+    cover: optimizeBookCover(db.cover),
     reviews: [],
   };
 }

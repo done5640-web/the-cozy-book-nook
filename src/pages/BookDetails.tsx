@@ -1,6 +1,6 @@
 import { useParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowLeft, Star, ShoppingCart } from "lucide-react";
+import { ArrowLeft, ShoppingCart } from "lucide-react";
 import { useBooks } from "@/hooks/use-books";
 import { useCart } from "@/contexts/CartContext";
 import BookCard from "@/components/BookCard";
@@ -60,15 +60,6 @@ const BookDetails = () => {
             <span className="text-primary text-sm font-medium">{book.genre}</span>
             <h1 className="font-serif text-3xl md:text-4xl font-bold mt-2 mb-2">{book.title}</h1>
             <p className="text-muted-foreground mb-4">nga {book.author}</p>
-
-            <div className="flex items-center gap-2 mb-6">
-              <div className="flex gap-0.5">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} className={`h-4 w-4 ${i < Math.floor(book.rating) ? "fill-primary text-primary" : "text-border"}`} />
-                ))}
-              </div>
-              <span className="text-sm text-muted-foreground">({book.rating})</span>
-            </div>
 
             <p className="text-muted-foreground leading-relaxed mb-8">{book.description}</p>
 
