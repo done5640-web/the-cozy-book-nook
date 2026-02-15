@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, ShoppingCart, Moon, Sun, BookOpen } from "lucide-react";
+import { Menu, X, ShoppingCart, BookOpen } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -13,14 +13,8 @@ const navLinks = [
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [isDark, setIsDark] = useState(false);
   const location = useLocation();
   const { totalItems } = useCart();
-
-  const toggleDark = () => {
-    setIsDark(!isDark);
-    document.documentElement.classList.toggle("dark");
-  };
 
   return (
     <nav className="sticky top-0 z-50 bg-background/90 backdrop-blur-md border-b border-border">
@@ -50,10 +44,6 @@ const Navbar = () => {
         </div>
 
         <div className="flex items-center gap-3">
-          <button onClick={toggleDark} className="p-2 rounded-full hover:bg-muted transition-colors" aria-label="Toggle dark mode">
-            {isDark ? <Sun className="h-5 w-5 text-foreground" /> : <Moon className="h-5 w-5 text-foreground" />}
-          </button>
-
           <Link to="/shporta" className="relative p-2 rounded-full hover:bg-muted transition-colors">
             <ShoppingCart className="h-5 w-5 text-foreground" />
             {totalItems > 0 && (

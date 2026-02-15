@@ -1,19 +1,20 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowRight, Star, BookOpen, Mail } from "lucide-react";
+import { ArrowRight, Star, BookOpen, Mail, Heart, Search, Sparkles, Landmark, Brain } from "lucide-react";
 import { books, genres, testimonials } from "@/data/books";
 import BookCard from "@/components/BookCard";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import type { LucideIcon } from "lucide-react";
 
-const genreIcons: Record<string, string> = {
-  "Romancë": "❤️",
-  "Mister": "🔍",
-  "Fantazi": "✨",
-  "Histori": "📜",
-  "Zhvillim Personal": "🧠",
+const genreIcons: Record<string, LucideIcon> = {
+  "Romancë": Heart,
+  "Mister": Search,
+  "Fantazi": Sparkles,
+  "Histori": Landmark,
+  "Zhvillim Personal": Brain,
 };
 
 const Index = () => {
@@ -25,7 +26,11 @@ const Index = () => {
 
       {/* Hero */}
       <section className="relative overflow-hidden py-20 md:py-32">
-        <div className="absolute inset-0 bg-paper opacity-50" />
+        <div
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: "url('https://images.unsplash.com/photo-1507842217343-583bb7270b66?w=1600&q=80')" }}
+        />
+        <div className="absolute inset-0 bg-background/80" />
         <div className="container mx-auto px-4 relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 40 }}
@@ -105,23 +110,26 @@ const Index = () => {
             <p className="text-muted-foreground">Gjeni zhanrin tuaj të preferuar</p>
           </motion.div>
           <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-            {genres.map((genre, i) => (
-              <motion.div
-                key={genre}
-                initial={{ opacity: 0, scale: 0.9 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.08 }}
-              >
-                <Link
-                  to={`/librat?genre=${genre}`}
-                  className="block p-6 bg-background rounded-lg border border-border text-center hover:border-primary hover:shadow-md transition-all group"
+            {genres.map((genre, i) => {
+              const Icon = genreIcons[genre];
+              return (
+                <motion.div
+                  key={genre}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.08 }}
                 >
-                  <span className="text-3xl mb-3 block">{genreIcons[genre]}</span>
-                  <h3 className="font-serif font-semibold text-sm group-hover:text-primary transition-colors">{genre}</h3>
-                </Link>
-              </motion.div>
-            ))}
+                  <Link
+                    to={`/librat?genre=${genre}`}
+                    className="block p-6 bg-background rounded-lg border border-border text-center hover:border-primary hover:shadow-md transition-all group"
+                  >
+                    <Icon className="h-8 w-8 mx-auto mb-3 text-primary group-hover:scale-110 transition-transform" />
+                    <h3 className="font-serif font-semibold text-sm group-hover:text-primary transition-colors">{genre}</h3>
+                  </Link>
+                </motion.div>
+              );
+            })}
           </div>
         </div>
       </section>
