@@ -1,6 +1,7 @@
 import { useState, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useBooks } from "@/hooks/use-books";
 import { useCategories } from "@/hooks/use-categories";
 import BookCard from "@/components/BookCard";
@@ -8,12 +9,15 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 
+const BOOKS_PER_PAGE = 12;
+
 const Books = () => {
   const { books } = useBooks();
   const { categories } = useCategories();
   const [searchParams, setSearchParams] = useSearchParams();
   const [selectedGenre, setSelectedGenre] = useState(searchParams.get("genre") || "Të gjitha");
   const [sortBy, setSortBy] = useState("default");
+  const [page, setPage] = useState(1);
 
   const filteredBooks = useMemo(() => {
     let result = selectedGenre === "Të gjitha" ? books : books.filter((b) => b.genre === selectedGenre);
@@ -23,8 +27,12 @@ const Books = () => {
     return result;
   }, [books, selectedGenre, sortBy]);
 
+  const totalPages = Math.ceil(filteredBooks.length / BOOKS_PER_PAGE);
+  const paginatedBooks = filteredBooks.slice((page - 1) * BOOKS_PER_PAGE, page * BOOKS_PER_PAGE);
+
   const handleGenre = (genre: string) => {
     setSelectedGenre(genre);
+    setPage(1);
     if (genre === "Të gjitha") {
       searchParams.delete("genre");
     } else {
@@ -85,20 +93,19 @@ const Books = () => {
           </div>
           <select
             value={sortBy}
-            onChange={(e) => setSortBy(e.target.value)}
+            onChange={(e) => { setSortBy(e.target.value); setPage(1); }}
             className="text-sm bg-card border border-border rounded-md px-3 py-2 text-foreground"
           >
             <option value="default">Renditje</option>
             <option value="price-asc">Çmimi: Ulët &rarr; Lartë</option>
             <option value="price-desc">Çmimi: Lartë &rarr; Ulët</option>
-            <option value="rating">Vlerësimi</option>
           </select>
         </div>
 
         {/* Grid */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
           <AnimatePresence mode="popLayout">
-            {filteredBooks.map((book) => (
+            {paginatedBooks.map((book) => (
               <motion.div
                 key={book.id}
                 layout
@@ -115,6 +122,21 @@ const Books = () => {
 
         {filteredBooks.length === 0 && (
           <p className="text-center text-muted-foreground py-12">Nuk u gjetën libra për këtë kategori.</p>
+        )}
+
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="flex items-center justify-center gap-3 mt-10">
+            <Button variant="outline" size="sm" onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1} className="gap-1">
+              <ChevronLeft className="h-4 w-4" /> Mbrapa
+            </Button>
+            <span className="text-sm text-muted-foreground">
+              Faqja {page} nga {totalPages}
+            </span>
+            <Button variant="outline" size="sm" onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages} className="gap-1">
+              Para <ChevronRight className="h-4 w-4" />
+            </Button>
+          </div>
         )}
       </section>
 

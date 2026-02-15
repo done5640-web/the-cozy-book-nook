@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Navigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  Plus, Trash2, Pencil, LogOut, Loader2, Save, X, Star, Eye, EyeOff, ImageIcon, Tag,
+  Plus, Trash2, Pencil, LogOut, Loader2, Save, X, Star, Eye, EyeOff, ImageIcon, Tag, Upload,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
@@ -40,6 +40,7 @@ const Admin = () => {
   const [isNewBook, setIsNewBook] = useState(false);
   const [savingBook, setSavingBook] = useState(false);
   const [deletingBook, setDeletingBook] = useState<string | null>(null);
+  const [uploadingImage, setUploadingImage] = useState(false);
 
   // Categories state
   const [categories, setCategories] = useState<DbCategory[]>([]);
@@ -86,10 +87,10 @@ const Admin = () => {
     if (!editingBook?.title || !editingBook?.author || !editingBook?.cover) return;
     setSavingBook(true);
     if (isNewBook) {
-      const { title, author, price, genre, description, rating, cover, featured } = editingBook;
+      const { title, author, price, genre, description, cover, featured } = editingBook;
       await supabase.from("books").insert([{
         title, author, price: price || 0, genre: genre || (categories[0]?.name || ""),
-        description: description || "", rating: rating || 0, cover, featured: featured || false,
+        description: description || "", rating: 0, cover, featured: featured || false,
       }]);
     } else {
       const { id, created_at, ...updates } = editingBook as DbBook;
@@ -138,6 +139,20 @@ const Admin = () => {
     await supabase.from("categories").delete().eq("id", id);
     setCategories((prev) => prev.filter((c) => c.id !== id));
     setDeletingCat(null);
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploadingImage(true);
+    const fileExt = file.name.split(".").pop();
+    const fileName = `${Date.now()}-${Math.random().toString(36).slice(2)}.${fileExt}`;
+    const { error } = await supabase.storage.from("book-covers").upload(fileName, file);
+    if (!error) {
+      const { data: urlData } = supabase.storage.from("book-covers").getPublicUrl(fileName);
+      setEditingBook((prev) => prev ? { ...prev, cover: urlData.publicUrl } : prev);
+    }
+    setUploadingImage(false);
   };
 
   const catNames = categories.map((c) => c.name);
@@ -191,7 +206,7 @@ const Admin = () => {
                 <h2 className="font-serif text-2xl font-bold text-gold">Menaxho Librat</h2>
                 <p className="text-sm text-muted-foreground">{books.length} libra gjithsej</p>
               </div>
-              <Button onClick={() => { setEditingBook({ title: "", author: "", price: 0, genre: catNames[0] || "", description: "", rating: 0, cover: "", featured: false }); setIsNewBook(true); }} className="gap-2">
+              <Button onClick={() => { setEditingBook({ title: "", author: "", price: 0, genre: catNames[0] || "", description: "", cover: "", featured: false }); setIsNewBook(true); }} className="gap-2">
                 <Plus className="h-4 w-4" /> Shto Libër
               </Button>
             </div>
@@ -221,15 +236,9 @@ const Admin = () => {
                         <label className="text-sm font-medium mb-1 block">Autori *</label>
                         <Input value={editingBook.author || ""} onChange={(e) => setEditingBook({ ...editingBook, author: e.target.value })} placeholder="Emri i autorit" className="bg-background" />
                       </div>
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <label className="text-sm font-medium mb-1 block">Çmimi (Lekë)</label>
-                          <Input type="number" value={editingBook.price || 0} onChange={(e) => setEditingBook({ ...editingBook, price: parseInt(e.target.value) || 0 })} className="bg-background" />
-                        </div>
-                        <div>
-                          <label className="text-sm font-medium mb-1 block">Vlerësimi (0-5)</label>
-                          <Input type="number" step="0.1" min="0" max="5" value={editingBook.rating || 0} onChange={(e) => setEditingBook({ ...editingBook, rating: parseFloat(e.target.value) || 0 })} className="bg-background" />
-                        </div>
+                      <div>
+                        <label className="text-sm font-medium mb-1 block">Çmimi (Lekë)</label>
+                        <Input type="number" value={editingBook.price || 0} onChange={(e) => setEditingBook({ ...editingBook, price: parseInt(e.target.value) || 0 })} className="bg-background" />
                       </div>
                       <div>
                         <label className="text-sm font-medium mb-1 block">Kategoria</label>
@@ -238,8 +247,15 @@ const Admin = () => {
                         </select>
                       </div>
                       <div>
-                        <label className="text-sm font-medium mb-1 block">URL e Fotos (Cover) *</label>
-                        <Input value={editingBook.cover || ""} onChange={(e) => setEditingBook({ ...editingBook, cover: e.target.value })} placeholder="https://example.com/image.jpg" className="bg-background" />
+                        <label className="text-sm font-medium mb-1 block">Foto e Librit *</label>
+                        <div className="flex items-center gap-3">
+                          <label className="flex items-center gap-2 px-4 py-2 bg-background border border-border rounded-md cursor-pointer hover:bg-muted transition-colors text-sm">
+                            <Upload className="h-4 w-4" />
+                            {uploadingImage ? "Duke ngarkuar..." : "Ngarko Foto"}
+                            <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" disabled={uploadingImage} />
+                          </label>
+                          {uploadingImage && <Loader2 className="h-4 w-4 animate-spin text-primary" />}
+                        </div>
                         {editingBook.cover && (
                           <img src={editingBook.cover} alt="Preview" className="mt-2 h-32 object-cover rounded-lg border border-border" onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
                         )}
@@ -290,7 +306,6 @@ const Admin = () => {
                       <div className="flex items-center gap-3 mt-1">
                         <span className="text-xs font-medium">{book.price} Lekë</span>
                         <span className="text-xs text-muted-foreground">{book.genre}</span>
-                        <span className="text-xs text-muted-foreground flex items-center gap-0.5"><Star className="h-3 w-3 fill-primary text-primary" /> {book.rating}</span>
                       </div>
                     </div>
                     <div className="flex items-center gap-1 shrink-0">

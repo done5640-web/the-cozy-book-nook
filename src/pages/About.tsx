@@ -1,12 +1,19 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Quote } from "lucide-react";
+import { Quote, ChevronLeft, ChevronRight } from "lucide-react";
 import { useBooks } from "@/hooks/use-books";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { Button } from "@/components/ui/button";
+
+const BOOKS_PER_PAGE = 8;
 
 const About = () => {
   const { books } = useBooks();
+  const [page, setPage] = useState(1);
+  const totalPages = Math.ceil(books.length / BOOKS_PER_PAGE);
+  const paginatedBooks = books.slice((page - 1) * BOOKS_PER_PAGE, page * BOOKS_PER_PAGE);
 
   return (
     <div className="min-h-screen bg-background">
@@ -87,30 +94,48 @@ const About = () => {
           >
             Nga Koleksioni Ynë
           </motion.h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {books.map((book, i) => (
-              <motion.div
-                key={book.id}
-                initial={{ opacity: 0, scale: 0.95 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: i * 0.08, ease: "easeOut" }}
-              >
-                <Link to={`/librat/${book.id}`} className="block group">
-                  <div className="rounded-lg overflow-hidden aspect-[3/4] mb-2">
-                    <img
-                      src={book.cover}
-                      alt={book.title}
-                      className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
-                      loading="lazy"
-                    />
-                  </div>
-                  <h3 className="font-serif text-sm font-semibold group-hover:text-primary transition-colors truncate">{book.title}</h3>
-                  <p className="text-xs text-muted-foreground">{book.author}</p>
-                </Link>
-              </motion.div>
-            ))}
-          </div>
+          {books.length === 0 ? (
+            <p className="text-center text-muted-foreground py-8">Asnjë libër ende.</p>
+          ) : (
+            <>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {paginatedBooks.map((book, i) => (
+                  <motion.div
+                    key={book.id}
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.4, delay: i * 0.05, ease: "easeOut" }}
+                  >
+                    <Link to={`/librat/${book.id}`} className="block group">
+                      <div className="rounded-lg overflow-hidden aspect-[3/4] mb-2">
+                        <img
+                          src={book.cover}
+                          alt={book.title}
+                          className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+                          loading="lazy"
+                        />
+                      </div>
+                      <h3 className="font-serif text-sm font-semibold group-hover:text-primary transition-colors truncate">{book.title}</h3>
+                      <p className="text-xs text-muted-foreground">{book.author}</p>
+                    </Link>
+                  </motion.div>
+                ))}
+              </div>
+              {totalPages > 1 && (
+                <div className="flex items-center justify-center gap-3 mt-10">
+                  <Button variant="outline" size="sm" onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1} className="gap-1">
+                    <ChevronLeft className="h-4 w-4" /> Mbrapa
+                  </Button>
+                  <span className="text-sm text-muted-foreground">
+                    Faqja {page} nga {totalPages}
+                  </span>
+                  <Button variant="outline" size="sm" onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages} className="gap-1">
+                    Para <ChevronRight className="h-4 w-4" />
+                  </Button>
+                </div>
+              )}
+            </>
+          )}
         </div>
       </section>
 

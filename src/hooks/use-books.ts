@@ -30,8 +30,8 @@ function dbToBook(db: DbBook): Book {
 }
 
 export function useBooks() {
-  const [books, setBooks] = useState<Book[]>(fallbackBooks);
-  const [featuredBooks, setFeaturedBooks] = useState<Book[]>(fallbackBooks.slice(0, 4));
+  const [books, setBooks] = useState<Book[]>([]);
+  const [featuredBooks, setFeaturedBooks] = useState<Book[]>([]);
   const [loading, setLoading] = useState(true);
   const [usingDb, setUsingDb] = useState(false);
 
@@ -43,7 +43,7 @@ export function useBooks() {
           .select("*")
           .order("created_at", { ascending: false });
 
-        if (!error && data && data.length > 0) {
+        if (!error && data) {
           const mapped = data.map(dbToBook);
           setBooks(mapped);
           const featured = data.filter((b: DbBook) => b.featured).map(dbToBook);
@@ -51,7 +51,7 @@ export function useBooks() {
           setUsingDb(true);
         }
       } catch {
-        // Supabase not reachable, use fallback
+        // Supabase not reachable
       }
       setLoading(false);
     };
