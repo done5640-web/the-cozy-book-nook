@@ -1,6 +1,7 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
-import { ShoppingCart } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { ShoppingCart, Check } from "lucide-react";
 import { Book, discountedPrice } from "@/data/books";
 import { useCart } from "@/contexts/CartContext";
 import { Button } from "@/components/ui/button";
@@ -12,33 +13,41 @@ interface BookCardProps {
 
 const BookCard = ({ book, childrenTheme = false }: BookCardProps) => {
   const { addToCart } = useCart();
+  const [justAdded, setJustAdded] = useState(false);
+
+  const handleAdd = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (justAdded) return;
+    addToCart(book);
+    setJustAdded(true);
+    setTimeout(() => setJustAdded(false), 1200);
+  };
 
   if (childrenTheme) {
     return (
       <motion.div
-        whileHover={{ y: -8, scale: 1.03 }}
-        transition={{ duration: 0.3, type: "spring", bounce: 0.4 }}
-        className="bg-white rounded-2xl overflow-hidden border-2 border-pink-200 group hover:border-yellow-400 hover:shadow-2xl hover:shadow-pink-200/50 transition-all duration-300"
+        whileHover={{ y: -6 }}
+        transition={{ duration: 0.25, ease: "easeOut" }}
+        className="bg-white rounded-2xl overflow-hidden border border-purple-100 group hover:border-purple-300 hover:shadow-xl hover:shadow-purple-100/60 transition-all duration-300"
       >
         <Link to={`/librat/${book.id}`}>
           <div className="aspect-[2/3] overflow-hidden relative">
             <img
               src={book.cover}
               alt={book.title}
-              className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-110"
+              className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
               loading="lazy"
             />
-            {/* Sparkle overlay on hover */}
-            <div className="absolute inset-0 bg-gradient-to-t from-pink-200/0 to-yellow-200/0 group-hover:from-pink-200/20 group-hover:to-yellow-200/10 transition-all duration-300" />
+            <div className="absolute inset-0 bg-gradient-to-t from-purple-900/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
           </div>
         </Link>
-        <div className="p-2.5 md:p-4 bg-gradient-to-b from-white to-pink-50/50">
+        <div className="p-2.5 md:p-4">
           <Link to={`/librat/${book.id}`}>
-            <p className="text-xs text-pink-500 font-semibold mb-1">{book.genre}</p>
-            <h3 className="font-serif font-bold text-sm md:text-base mb-1 line-clamp-1 text-purple-700 group-hover:text-pink-600 transition-colors duration-200">
+            <p className="text-xs text-purple-400 font-semibold mb-1">{book.genre}</p>
+            <h3 className="font-serif font-bold text-sm md:text-base mb-1 line-clamp-1 text-slate-700 group-hover:text-purple-600 transition-colors duration-200">
               {book.title}
             </h3>
-            <p className="text-xs md:text-sm text-purple-400 mb-2">{book.author}</p>
+            <p className="text-xs md:text-sm text-slate-400 mb-2">{book.author}</p>
           </Link>
           <div className="flex items-center justify-between gap-1 min-w-0">
             <div className="flex flex-col min-w-0 shrink">
@@ -46,25 +55,38 @@ const BookCard = ({ book, childrenTheme = false }: BookCardProps) => {
                 <>
                   <div className="flex items-center gap-1 flex-wrap">
                     <span className="font-bold text-sm md:text-base text-purple-700 leading-tight">{discountedPrice(book)} Lekë</span>
-                    <span className="bg-red-400 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full leading-tight shrink-0">-{book.discount}%</span>
+                    <span className="bg-rose-400 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full leading-tight shrink-0">-{book.discount}%</span>
                   </div>
-                  <span className="text-xs text-pink-300 line-through leading-tight">{book.price} Lekë</span>
+                  <span className="text-xs text-slate-300 line-through leading-tight">{book.price} Lekë</span>
                 </>
               ) : (
                 <span className="font-bold text-sm md:text-base text-purple-700 truncate">{book.price} Lekë</span>
               )}
             </div>
-            <Button
-              size="sm"
-              onClick={(e) => {
-                e.preventDefault();
-                addToCart(book);
-              }}
-              className="gap-0.5 md:gap-1 h-7 px-2 text-xs md:h-9 md:px-3 md:text-sm shrink-0 bg-gradient-to-r from-pink-400 to-purple-500 border-0 hover:from-pink-500 hover:to-purple-600 text-white rounded-full"
-            >
-              <ShoppingCart className="h-3 w-3 md:h-3.5 md:w-3.5" />
-              Shto
-            </Button>
+            <motion.div whileTap={{ scale: 0.88 }} className="shrink-0">
+              <Button
+                size="sm"
+                onClick={handleAdd}
+                className={`gap-0.5 md:gap-1 h-7 px-2 text-xs md:h-9 md:px-3 md:text-sm transition-all duration-300 ${
+                  justAdded
+                    ? "bg-green-500 hover:bg-green-500 border-green-500"
+                    : "bg-gradient-to-r from-violet-500 to-purple-600 border-0 hover:from-violet-600 hover:to-purple-700"
+                } text-white`}
+              >
+                <AnimatePresence mode="wait" initial={false}>
+                  {justAdded ? (
+                    <motion.span key="check" initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }} className="flex items-center gap-0.5">
+                      <Check className="h-3 w-3 md:h-3.5 md:w-3.5" />
+                    </motion.span>
+                  ) : (
+                    <motion.span key="cart" initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }} className="flex items-center gap-0.5 md:gap-1">
+                      <ShoppingCart className="h-3 w-3 md:h-3.5 md:w-3.5" />
+                      Shto
+                    </motion.span>
+                  )}
+                </AnimatePresence>
+              </Button>
+            </motion.div>
           </div>
         </div>
       </motion.div>
@@ -109,17 +131,28 @@ const BookCard = ({ book, childrenTheme = false }: BookCardProps) => {
               <span className="font-bold text-sm md:text-base text-foreground truncate">{book.price} Lekë</span>
             )}
           </div>
-          <Button
-            size="sm"
-            onClick={(e) => {
-              e.preventDefault();
-              addToCart(book);
-            }}
-            className="gap-0.5 md:gap-1 h-7 px-2 text-xs md:h-9 md:px-3 md:text-sm shrink-0"
-          >
-            <ShoppingCart className="h-3 w-3 md:h-3.5 md:w-3.5" />
-            Shto
-          </Button>
+          <motion.div whileTap={{ scale: 0.88 }} className="shrink-0">
+            <Button
+              size="sm"
+              onClick={handleAdd}
+              className={`gap-0.5 md:gap-1 h-7 px-2 text-xs md:h-9 md:px-3 md:text-sm transition-all duration-300 ${
+                justAdded ? "bg-green-600 hover:bg-green-600 border-green-600" : ""
+              }`}
+            >
+              <AnimatePresence mode="wait" initial={false}>
+                {justAdded ? (
+                  <motion.span key="check" initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }} className="flex items-center gap-0.5">
+                    <Check className="h-3 w-3 md:h-3.5 md:w-3.5" />
+                  </motion.span>
+                ) : (
+                  <motion.span key="cart" initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }} className="flex items-center gap-0.5 md:gap-1">
+                    <ShoppingCart className="h-3 w-3 md:h-3.5 md:w-3.5" />
+                    Shto
+                  </motion.span>
+                )}
+              </AnimatePresence>
+            </Button>
+          </motion.div>
         </div>
       </div>
     </motion.div>

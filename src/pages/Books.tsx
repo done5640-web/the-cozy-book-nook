@@ -1,7 +1,7 @@
 import { useState, useMemo, useEffect, useRef } from "react";
 import { useSearchParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronLeft, ChevronRight, Search, X } from "lucide-react";
+import { ChevronLeft, ChevronRight, Search, X, Sparkles } from "lucide-react";
 import { useBooks } from "@/hooks/use-books";
 import { useCategories } from "@/hooks/use-categories";
 import BookCard from "@/components/BookCard";
@@ -12,34 +12,49 @@ import { Input } from "@/components/ui/input";
 
 const BOOKS_PER_PAGE = 12;
 
-// ── Floating shapes for children's theme ──────────────────────────────────────
-const SHAPES = ["⭐", "🌈", "🦄", "🐉", "🧸", "🎈", "🌟", "🦋", "🍭", "🎪", "🐬", "🌺"];
-
-function ChildrenFloater({ emoji, style }: { emoji: string; style: React.CSSProperties }) {
+// ── Elegant floating shapes for children's theme (SVG-based, no emoji) ────────
+function FloatingShape({ style, type }: { style: React.CSSProperties; type: number }) {
+  const shapes = [
+    // Star
+    <svg key="star" viewBox="0 0 24 24" fill="currentColor" className="w-full h-full">
+      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+    </svg>,
+    // Circle
+    <svg key="circle" viewBox="0 0 24 24" className="w-full h-full">
+      <circle cx="12" cy="12" r="10" fill="currentColor" opacity="0.8"/>
+    </svg>,
+    // Diamond
+    <svg key="diamond" viewBox="0 0 24 24" fill="currentColor" className="w-full h-full">
+      <path d="M12 2L22 12L12 22L2 12L12 2z"/>
+    </svg>,
+    // Small star
+    <svg key="smallstar" viewBox="0 0 24 24" fill="currentColor" className="w-full h-full">
+      <path d="M12 5l2.12 4.3 4.73.69-3.42 3.33.81 4.71L12 15.64l-4.24 2.23.81-4.71L5.15 9.99l4.73-.69L12 5z"/>
+    </svg>,
+  ];
   return (
-    <motion.span
-      className="pointer-events-none select-none fixed text-2xl md:text-3xl z-0"
+    <motion.div
+      className="pointer-events-none select-none fixed z-0"
       style={style}
-      animate={{ y: [0, -18, 0], rotate: [0, 12, -12, 0], scale: [1, 1.15, 1] }}
-      transition={{ duration: 3 + Math.random() * 2, repeat: Infinity, ease: "easeInOut", delay: Math.random() * 2 }}
+      animate={{ y: [0, -14, 0], rotate: [0, 8, -8, 0], scale: [1, 1.1, 1] }}
+      transition={{ duration: 4 + (type * 0.7), repeat: Infinity, ease: "easeInOut", delay: type * 0.4 }}
     >
-      {emoji}
-    </motion.span>
+      {shapes[type % shapes.length]}
+    </motion.div>
   );
 }
 
-// Pre-computed positions so they're stable across re-renders
-const floaterData = SHAPES.map((emoji, i) => ({
-  emoji,
+const FLOATER_DATA = Array.from({ length: 14 }, (_, i) => ({
+  type: i % 4,
   style: {
-    left: `${(i * 8.3) % 100}%`,
-    top: `${10 + (i * 13) % 70}%`,
-    opacity: 0.55,
+    left: `${(i * 7.3) % 95}%`,
+    top: `${8 + (i * 11) % 72}%`,
+    width: `${16 + (i % 3) * 8}px`,
+    height: `${16 + (i % 3) * 8}px`,
+    color: ["#F9A8D4", "#C4B5FD", "#93C5FD", "#6EE7B7", "#FDE68A"][i % 5],
+    opacity: 0.4,
   } as React.CSSProperties,
 }));
-
-// ── Rainbow gradient title for children mode ──────────────────────────────────
-const RAINBOW_COLORS = ["#FF6B6B", "#FF9F43", "#FECA57", "#48DBB4", "#54A0FF", "#FF6B9D"];
 
 const Books = () => {
   const { books } = useBooks();
@@ -66,18 +81,12 @@ const Books = () => {
 
   const filteredBooks = useMemo(() => {
     let result = books;
-
-    // Genre filter
     if (selectedGenre !== "Të gjitha") {
       result = result.filter((b) => b.genre === selectedGenre);
     }
-
-    // Subcategory filter
     if (selectedSubcat) {
       result = result.filter((b) => b.subcategory === selectedSubcat);
     }
-
-    // Search filter
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase();
       result = result.filter(
@@ -90,7 +99,6 @@ const Books = () => {
           b.description.toLowerCase().includes(q)
       );
     }
-
     if (sortBy === "price-asc") result = [...result].sort((a, b) => a.price - b.price);
     if (sortBy === "price-desc") result = [...result].sort((a, b) => b.price - a.price);
     if (sortBy === "rating") result = [...result].sort((a, b) => b.rating - a.rating);
@@ -105,11 +113,7 @@ const Books = () => {
     setSelectedSubcat("");
     setPage(1);
     const p = new URLSearchParams(searchParams);
-    if (genre === "Të gjitha") {
-      p.delete("genre");
-    } else {
-      p.set("genre", genre);
-    }
+    if (genre === "Të gjitha") { p.delete("genre"); } else { p.set("genre", genre); }
     p.delete("subcat");
     setSearchParams(p);
   };
@@ -118,11 +122,7 @@ const Books = () => {
     setSelectedSubcat(sub);
     setPage(1);
     const p = new URLSearchParams(searchParams);
-    if (sub) {
-      p.set("subcat", sub);
-    } else {
-      p.delete("subcat");
-    }
+    if (sub) { p.set("subcat", sub); } else { p.delete("subcat"); }
     setSearchParams(p);
   };
 
@@ -130,34 +130,26 @@ const Books = () => {
     setSearchQuery(q);
     setPage(1);
     const p = new URLSearchParams(searchParams);
-    if (q.trim()) {
-      p.set("q", q);
-    } else {
-      p.delete("q");
-    }
+    if (q.trim()) { p.set("q", q); } else { p.delete("q"); }
     setSearchParams(p);
   };
 
-  // ── Children theme styles ──────────────────────────────────────────────────
-  const childrenBg = isChildrenTheme
-    ? "bg-gradient-to-br from-[#FFF9C4] via-[#FFE0F0] to-[#E0F7FF]"
-    : "bg-background";
-
   return (
-    <div className={`min-h-screen transition-colors duration-700 ${childrenBg} relative overflow-x-hidden`}>
-      {/* Floating emoji decorations in children mode */}
+    <div className={`min-h-screen transition-colors duration-700 relative overflow-x-hidden ${isChildrenTheme ? "bg-gradient-to-br from-[#FEF9EC] via-[#FDF0F8] to-[#EEF5FF]" : "bg-background"}`}>
+
+      {/* Elegant floating shapes for children theme */}
       <AnimatePresence>
-        {isChildrenTheme &&
-          floaterData.map((f, i) => (
-            <ChildrenFloater key={i} emoji={f.emoji} style={f.style} />
-          ))}
+        {isChildrenTheme && FLOATER_DATA.map((f, i) => (
+          <FloatingShape key={i} type={f.type} style={f.style} />
+        ))}
       </AnimatePresence>
 
       <Navbar />
 
       {/* Hero */}
-      <section className={`relative py-16 overflow-hidden -mt-16 pt-28 ${isChildrenTheme ? "" : ""}`}>
-        {!isChildrenTheme && (
+      <section className="relative py-16 overflow-hidden -mt-16 pt-28">
+        {/* Background */}
+        {!isChildrenTheme ? (
           <>
             <img
               src="https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=1024&q=30"
@@ -169,44 +161,69 @@ const Books = () => {
             <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-background" />
             <div className="absolute inset-0 bg-[#6B2D2D]/20" />
           </>
-        )}
-
-        {isChildrenTheme && (
-          <div className="absolute inset-0 bg-gradient-to-b from-[#FFF176]/60 via-[#FFB3C6]/40 to-transparent" />
+        ) : (
+          /* Children hero — soft watercolour-style gradient, no photo */
+          <div className="absolute inset-0 bg-gradient-to-b from-[#FADADD]/80 via-[#E8D5F5]/60 to-transparent" />
         )}
 
         <div className="container mx-auto px-4 text-center relative z-10">
           {isChildrenTheme ? (
             <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.7, type: "spring", bounce: 0.4 }}
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+              className="py-6"
             >
+              {/* Decorative line above */}
               <motion.div
-                className="text-5xl mb-4"
-                animate={{ rotate: [0, 10, -10, 0] }}
-                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                className="flex items-center justify-center gap-3 mb-5"
+                initial={{ opacity: 0, scaleX: 0 }}
+                animate={{ opacity: 1, scaleX: 1 }}
+                transition={{ duration: 0.6, delay: 0.2 }}
               >
-                📚✨
+                <div className="h-px w-16 bg-gradient-to-r from-transparent to-purple-300" />
+                <Sparkles className="h-5 w-5 text-purple-400" />
+                <div className="h-px w-16 bg-gradient-to-l from-transparent to-purple-300" />
               </motion.div>
-              <h1
-                className="font-serif text-4xl md:text-6xl font-extrabold mb-4 drop-shadow-lg"
+
+              {/* Title — large, elegant, readable on light bg */}
+              <h1 className="font-serif text-5xl md:text-7xl font-extrabold mb-4 leading-tight tracking-tight"
                 style={{
-                  background: `linear-gradient(90deg, ${RAINBOW_COLORS.join(", ")})`,
+                  background: "linear-gradient(135deg, #9333EA 0%, #EC4899 50%, #3B82F6 100%)",
                   WebkitBackgroundClip: "text",
                   WebkitTextFillColor: "transparent",
                   backgroundClip: "text",
+                  filter: "drop-shadow(0 2px 8px rgba(147,51,234,0.15))",
                 }}
               >
                 {selectedGenre}
               </h1>
-              <motion.p
-                className="text-lg font-semibold text-pink-500"
-                animate={{ scale: [1, 1.05, 1] }}
-                transition={{ duration: 1.5, repeat: Infinity }}
+
+              <p className="text-base md:text-lg font-medium text-purple-500/80 tracking-wide">
+                Zbuloni botën magjike të librave
+              </p>
+
+              {/* Decorative dots */}
+              <motion.div
+                className="flex items-center justify-center gap-2 mt-4"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.5 }}
               >
-                🌟 Libra magjikë për aventura të reja! 🌟
-              </motion.p>
+                {[...Array(5)].map((_, i) => (
+                  <motion.div
+                    key={i}
+                    className="rounded-full"
+                    style={{
+                      width: i === 2 ? 10 : 6,
+                      height: i === 2 ? 10 : 6,
+                      background: ["#F9A8D4","#C4B5FD","#93C5FD","#6EE7B7","#FDE68A"][i],
+                    }}
+                    animate={{ scale: [1, 1.4, 1] }}
+                    transition={{ duration: 1.2, repeat: Infinity, delay: i * 0.2 }}
+                  />
+                ))}
+              </motion.div>
             </motion.div>
           ) : (
             <>
@@ -239,7 +256,7 @@ const Books = () => {
               value={searchQuery}
               onChange={(e) => handleSearch(e.target.value)}
               placeholder="Kërko sipas titullit, autorit, shtëpisë botuese..."
-              className={`pl-10 pr-10 ${isChildrenTheme ? "border-pink-300 bg-white/80 focus:border-pink-400 focus:ring-pink-200 rounded-full shadow-md" : "bg-card"}`}
+              className={`pl-10 pr-10 ${isChildrenTheme ? "border-purple-200 bg-white/90 focus-visible:ring-purple-300 rounded-xl shadow-sm" : "bg-card"}`}
             />
             {searchQuery && (
               <button
@@ -265,15 +282,16 @@ const Books = () => {
             {categories.map((genre) => {
               const catObj = categoryObjects.find((c) => c.name === genre);
               const isKids = catObj?.is_children ?? false;
+              const isActive = selectedGenre === genre;
               return (
                 <Button
                   key={genre}
-                  variant={selectedGenre === genre ? "default" : "outline"}
+                  variant={isActive ? "default" : "outline"}
                   size="sm"
                   onClick={() => handleGenre(genre)}
-                  className={isKids && selectedGenre !== genre ? "border-pink-300 text-pink-600 hover:bg-pink-50" : ""}
+                  className={isKids && !isActive ? "border-purple-300 text-purple-600 hover:bg-purple-50" : ""}
                 >
-                  {isKids && "🧒 "}{genre}
+                  {genre}
                 </Button>
               );
             })}
@@ -281,7 +299,7 @@ const Books = () => {
           <select
             value={sortBy}
             onChange={(e) => { setSortBy(e.target.value); setPage(1); }}
-            className={`text-sm border border-border rounded-md px-3 py-2 text-foreground ${isChildrenTheme ? "bg-white/80 border-pink-200" : "bg-card"}`}
+            className={`text-sm border border-border rounded-md px-3 py-2 text-foreground ${isChildrenTheme ? "bg-white/90 border-purple-200" : "bg-card"}`}
           >
             <option value="default">Renditje</option>
             <option value="price-asc">Çmimi: Ulët → Lartë</option>
@@ -296,7 +314,7 @@ const Books = () => {
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
-              className="flex flex-wrap gap-2 mb-6 pl-2 border-l-2 border-primary/30"
+              className={`flex flex-wrap gap-2 mb-6 pl-2 border-l-2 ${isChildrenTheme ? "border-purple-300" : "border-primary/30"}`}
             >
               <button
                 onClick={() => handleSubcat("")}
@@ -325,22 +343,21 @@ const Books = () => {
         )}
 
         {/* Grid */}
-        <div className={`grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 ${isChildrenTheme ? "relative z-10" : ""}`}>
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 relative z-10">
           <AnimatePresence mode="popLayout">
             {paginatedBooks.map((book, i) => (
               <motion.div
                 key={book.id}
                 layout
-                initial={{ opacity: 0, scale: 0.9, y: isChildrenTheme ? 20 : 10 }}
+                initial={{ opacity: 0, scale: 0.92, y: 16 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.9 }}
+                exit={{ opacity: 0, scale: 0.92 }}
                 transition={{
-                  duration: isChildrenTheme ? 0.5 : 0.3,
-                  delay: isChildrenTheme ? i * 0.05 : 0,
-                  ease: isChildrenTheme ? [0.175, 0.885, 0.32, 1.275] : "easeOut",
+                  duration: isChildrenTheme ? 0.45 : 0.3,
+                  delay: isChildrenTheme ? i * 0.04 : 0,
+                  ease: [0.22, 1, 0.36, 1],
                 }}
-                whileHover={isChildrenTheme ? { scale: 1.04, rotate: [-1, 1][i % 2] } : undefined}
-                className={isChildrenTheme ? "drop-shadow-md" : ""}
+                whileHover={isChildrenTheme ? { y: -6, scale: 1.02 } : undefined}
               >
                 <BookCard book={book} childrenTheme={isChildrenTheme} />
               </motion.div>
@@ -352,15 +369,15 @@ const Books = () => {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="text-center py-12"
+            className="text-center py-16"
           >
             {isChildrenTheme ? (
               <div>
-                <div className="text-5xl mb-4">🔍📚</div>
-                <p className="text-pink-500 font-semibold text-lg">Nuk u gjetën libra për këtë kategori. Provoni sërish!</p>
+                <Sparkles className="h-12 w-12 text-purple-300 mx-auto mb-3" />
+                <p className="text-purple-400 font-medium text-lg">Nuk u gjetën libra. Provoni sërish!</p>
               </div>
             ) : (
-              <p className="text-center text-muted-foreground py-12">Nuk u gjetën libra për këtë kategori.</p>
+              <p className="text-muted-foreground">Nuk u gjetën libra për këtë kategori.</p>
             )}
           </motion.div>
         )}
@@ -371,9 +388,7 @@ const Books = () => {
             <Button variant="outline" size="sm" onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1} className="gap-1">
               <ChevronLeft className="h-4 w-4" /> Mbrapa
             </Button>
-            <span className="text-sm text-muted-foreground">
-              Faqja {page} nga {totalPages}
-            </span>
+            <span className="text-sm text-muted-foreground">Faqja {page} nga {totalPages}</span>
             <Button variant="outline" size="sm" onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages} className="gap-1">
               Para <ChevronRight className="h-4 w-4" />
             </Button>

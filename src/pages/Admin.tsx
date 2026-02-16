@@ -154,11 +154,25 @@ const Admin = () => {
   const handleUpdateCategory = async () => {
     if (!editingCat || !editCatName.trim()) return;
     setSavingCat(true);
-    await supabase.from("categories").update({ name: editCatName.trim(), is_children: editCatIsChildren }).eq("id", editingCat.id);
+    const newName = editCatName.trim();
+    const oldName = editingCat.name;
+    // Update category name
+    await supabase.from("categories").update({ name: newName, is_children: editCatIsChildren }).eq("id", editingCat.id);
+    // If name changed, cascade update books.genre and books.subcategory
+    if (newName !== oldName) {
+      // If this is a top-level category, update books.genre
+      if (!editingCat.parent_id) {
+        await supabase.from("books").update({ genre: newName }).eq("genre", oldName);
+      } else {
+        // If subcategory, update books.subcategory
+        await supabase.from("books").update({ subcategory: newName }).eq("subcategory", oldName);
+      }
+    }
     setEditingCat(null);
     setEditCatName("");
     setEditCatIsChildren(false);
     await fetchCategories();
+    await fetchBooks();
     setSavingCat(false);
   };
 
@@ -486,14 +500,38 @@ const Admin = () => {
                 </div>
                 <div className="min-w-[160px]">
                   <label className="text-xs text-muted-foreground mb-1 block">Kategori Prind (për nënkategori)</label>
-                  <select value={newCatParentId} onChange={(e) => setNewCatParentId(e.target.value)} className="w-full text-sm bg-background border border-border rounded-md px-3 py-2 text-foreground">
+                  <select
+                    value={newCatParentId}
+                    onChange={(e) => {
+                      const pid = e.target.value;
+                      setNewCatParentId(pid);
+                      // Auto-inherit is_children from parent
+                      if (pid) {
+                        const parent = topLevelCats.find((c) => c.id === pid);
+                        setNewCatIsChildren(parent?.is_children ?? false);
+                      } else {
+                        setNewCatIsChildren(false);
+                      }
+                    }}
+                    className="w-full text-sm bg-background border border-border rounded-md px-3 py-2 text-foreground"
+                  >
                     <option value="">— Kategori kryesore —</option>
                     {topLevelCats.map((c) => (<option key={c.id} value={c.id}>{c.name}</option>))}
                   </select>
                 </div>
+                {/* is_children: auto-set from parent, disabled if subcategory */}
                 <div className="flex items-center gap-2 pb-1">
-                  <input type="checkbox" id="newCatChildren" checked={newCatIsChildren} onChange={(e) => setNewCatIsChildren(e.target.checked)} className="rounded border-border" />
-                  <label htmlFor="newCatChildren" className="text-sm font-medium">🧒 Për Fëmijë</label>
+                  <input
+                    type="checkbox"
+                    id="newCatChildren"
+                    checked={newCatIsChildren}
+                    disabled={!!newCatParentId} // subcategories inherit from parent, can't override
+                    onChange={(e) => setNewCatIsChildren(e.target.checked)}
+                    className="rounded border-border disabled:opacity-40 disabled:cursor-not-allowed"
+                  />
+                  <label htmlFor="newCatChildren" className={`text-sm font-medium ${newCatParentId ? "opacity-40 cursor-not-allowed" : ""}`}>
+                    Për Fëmijë {newCatParentId && <span className="text-xs text-muted-foreground font-normal">(trashëgohet nga prindi)</span>}
+                  </label>
                 </div>
                 <Button onClick={handleAddCategory} disabled={savingCat || !newCatName.trim()} className="gap-2 shrink-0">
                   {savingCat ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
