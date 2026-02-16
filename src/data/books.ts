@@ -5,10 +5,14 @@ export interface Book {
   price: number;
   discount: number; // percentage 0-100, e.g. 10 = 10% off
   genre: string;
+  subcategory?: string; // optional subcategory name
   description: string;
   rating: number;
   reviews: { name: string; rating: number; comment: string }[];
   cover: string;
+  publisher?: string;  // Shtëpia botuese
+  pages?: number;      // Numri i faqeve
+  year?: number;       // Viti i botimit
 }
 
 /** Returns the final price after discount */

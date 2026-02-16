@@ -17,16 +17,22 @@ interface DbBook {
   price: number;
   discount: number;
   genre: string;
+  subcategory?: string;
   description: string;
   rating: number;
   cover: string;
   featured: boolean;
   created_at: string;
+  publisher?: string;
+  pages?: number;
+  year?: number;
 }
 
 interface DbCategory {
   id: string;
   name: string;
+  parent_id: string | null;
+  is_children: boolean;
   created_at: string;
 }
 
@@ -45,12 +51,19 @@ const Admin = () => {
   const [priceInput, setPriceInput] = useState("");
   const [discountInput, setDiscountInput] = useState("");
 
+  // Publisher/pages/year string inputs
+  const [pagesInput, setPagesInput] = useState("");
+  const [yearInput, setYearInput] = useState("");
+
   // Categories state
   const [categories, setCategories] = useState<DbCategory[]>([]);
   const [loadingCats, setLoadingCats] = useState(true);
   const [newCatName, setNewCatName] = useState("");
+  const [newCatParentId, setNewCatParentId] = useState<string>("");
+  const [newCatIsChildren, setNewCatIsChildren] = useState(false);
   const [editingCat, setEditingCat] = useState<DbCategory | null>(null);
   const [editCatName, setEditCatName] = useState("");
+  const [editCatIsChildren, setEditCatIsChildren] = useState(false);
   const [savingCat, setSavingCat] = useState(false);
   const [deletingCat, setDeletingCat] = useState<string | null>(null);
 
@@ -90,11 +103,15 @@ const Admin = () => {
     if (!editingBook?.title || !editingBook?.author || !editingBook?.cover) return;
     setSavingBook(true);
     if (isNewBook) {
-      const { title, author, price, discount, genre, description, cover, featured } = editingBook;
+      const { title, author, price, discount, genre, subcategory, description, cover, featured, publisher, pages, year } = editingBook;
       await supabase.from("books").insert([{
         title, author, price: price || 0, discount: discount || 0,
         genre: genre || (categories[0]?.name || ""),
+        subcategory: subcategory || null,
         description: description || "", rating: 0, cover, featured: featured || false,
+        publisher: publisher || null,
+        pages: pages || null,
+        year: year || null,
       }]);
     } else {
       const { id, created_at, ...updates } = editingBook as DbBook;
@@ -122,8 +139,14 @@ const Admin = () => {
   const handleAddCategory = async () => {
     if (!newCatName.trim()) return;
     setSavingCat(true);
-    await supabase.from("categories").insert([{ name: newCatName.trim() }]);
+    await supabase.from("categories").insert([{
+      name: newCatName.trim(),
+      parent_id: newCatParentId || null,
+      is_children: newCatIsChildren,
+    }]);
     setNewCatName("");
+    setNewCatParentId("");
+    setNewCatIsChildren(false);
     await fetchCategories();
     setSavingCat(false);
   };
@@ -131,9 +154,10 @@ const Admin = () => {
   const handleUpdateCategory = async () => {
     if (!editingCat || !editCatName.trim()) return;
     setSavingCat(true);
-    await supabase.from("categories").update({ name: editCatName.trim() }).eq("id", editingCat.id);
+    await supabase.from("categories").update({ name: editCatName.trim(), is_children: editCatIsChildren }).eq("id", editingCat.id);
     setEditingCat(null);
     setEditCatName("");
+    setEditCatIsChildren(false);
     await fetchCategories();
     setSavingCat(false);
   };
@@ -190,7 +214,9 @@ const Admin = () => {
     setUploadingImage(false);
   };
 
-  const catNames = categories.map((c) => c.name);
+  // Top-level categories only (no parent) for genre selector
+  const topLevelCats = categories.filter((c) => !c.parent_id);
+  const catNames = topLevelCats.map((c) => c.name);
 
   return (
     <div className="min-h-screen bg-background">
@@ -243,7 +269,7 @@ const Admin = () => {
                 <h2 className="font-serif text-2xl font-bold text-gold">Menaxho Librat</h2>
                 <p className="text-sm text-muted-foreground">{books.length} libra gjithsej</p>
               </div>
-              <Button onClick={() => { setEditingBook({ title: "", author: "", price: 0, discount: 0, genre: catNames[0] || "", description: "", cover: "", featured: false }); setPriceInput(""); setDiscountInput(""); setIsNewBook(true); }} className="gap-2">
+              <Button onClick={() => { setEditingBook({ title: "", author: "", price: 0, discount: 0, genre: catNames[0] || "", subcategory: "", description: "", cover: "", featured: false, publisher: "", pages: undefined, year: undefined }); setPriceInput(""); setDiscountInput(""); setPagesInput(""); setYearInput(""); setIsNewBook(true); }} className="gap-2">
                 <Plus className="h-4 w-4" /> Shto Libër
               </Button>
             </div>
@@ -313,9 +339,50 @@ const Admin = () => {
                       </div>
                       <div>
                         <label className="text-sm font-medium mb-1 block">Kategoria</label>
-                        <select value={editingBook.genre || catNames[0] || ""} onChange={(e) => setEditingBook({ ...editingBook, genre: e.target.value })} className="w-full text-sm bg-background border border-border rounded-md px-3 py-2 text-foreground">
+                        <select value={editingBook.genre || catNames[0] || ""} onChange={(e) => setEditingBook({ ...editingBook, genre: e.target.value, subcategory: "" })} className="w-full text-sm bg-background border border-border rounded-md px-3 py-2 text-foreground">
                           {catNames.map((g) => (<option key={g} value={g}>{g}</option>))}
                         </select>
+                      </div>
+                      {/* Subcategory — show if selected category has subcats */}
+                      {(() => {
+                        const parentCat = topLevelCats.find((c) => c.name === editingBook.genre);
+                        const subs = parentCat ? categories.filter((c) => c.parent_id === parentCat.id) : [];
+                        if (subs.length === 0) return null;
+                        return (
+                          <div>
+                            <label className="text-sm font-medium mb-1 block">Nënkategoria</label>
+                            <select value={editingBook.subcategory || ""} onChange={(e) => setEditingBook({ ...editingBook, subcategory: e.target.value })} className="w-full text-sm bg-background border border-border rounded-md px-3 py-2 text-foreground">
+                              <option value="">— Pa nënkategori —</option>
+                              {subs.map((s) => (<option key={s.id} value={s.name}>{s.name}</option>))}
+                            </select>
+                          </div>
+                        );
+                      })()}
+                      <div className="grid grid-cols-3 gap-3">
+                        <div>
+                          <label className="text-sm font-medium mb-1 block">Shtëpia Botuese</label>
+                          <Input value={editingBook.publisher || ""} onChange={(e) => setEditingBook({ ...editingBook, publisher: e.target.value })} placeholder="p.sh. Onufri" className="bg-background" />
+                        </div>
+                        <div>
+                          <label className="text-sm font-medium mb-1 block">Faqe</label>
+                          <Input
+                            type="text" inputMode="numeric"
+                            value={pagesInput}
+                            onChange={(e) => { const raw = e.target.value.replace(/[^0-9]/g, ""); setPagesInput(raw); setEditingBook({ ...editingBook, pages: raw === "" ? undefined : parseInt(raw, 10) }); }}
+                            onFocus={(e) => e.target.select()}
+                            placeholder="320" className="bg-background"
+                          />
+                        </div>
+                        <div>
+                          <label className="text-sm font-medium mb-1 block">Viti</label>
+                          <Input
+                            type="text" inputMode="numeric"
+                            value={yearInput}
+                            onChange={(e) => { const raw = e.target.value.replace(/[^0-9]/g, ""); setYearInput(raw); setEditingBook({ ...editingBook, year: raw === "" ? undefined : parseInt(raw, 10) }); }}
+                            onFocus={(e) => e.target.select()}
+                            placeholder="2024" className="bg-background"
+                          />
+                        </div>
                       </div>
                       <div>
                         <label className="text-sm font-medium mb-1 block">Foto e Librit *</label>
@@ -383,7 +450,7 @@ const Admin = () => {
                       <button onClick={() => toggleFeatured(book)} className={`p-2 rounded-lg transition-colors ${book.featured ? "text-primary bg-primary/10 hover:bg-primary/20" : "text-muted-foreground hover:bg-muted"}`} title={book.featured ? "Hiq nga Kreu" : "Shto në Kreu"}>
                         {book.featured ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
                       </button>
-                      <button onClick={() => { setEditingBook({ ...book }); setPriceInput(String(book.price ?? "")); setDiscountInput(String(book.discount ?? "")); setIsNewBook(false); }} className="p-2 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors" title="Ndrysho"><Pencil className="h-4 w-4" /></button>
+                      <button onClick={() => { setEditingBook({ ...book }); setPriceInput(String(book.price ?? "")); setDiscountInput(String(book.discount ?? "")); setPagesInput(book.pages ? String(book.pages) : ""); setYearInput(book.year ? String(book.year) : ""); setIsNewBook(false); }} className="p-2 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors" title="Ndrysho"><Pencil className="h-4 w-4" /></button>
                       <button onClick={() => handleDeleteBook(book.id)} disabled={deletingBook === book.id} className="p-2 rounded-lg text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors" title="Fshi">
                         {deletingBook === book.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
                       </button>
@@ -400,22 +467,39 @@ const Admin = () => {
           <>
             <div className="mb-8">
               <h2 className="font-serif text-2xl font-bold text-gold mb-1">Menaxho Kategoritë</h2>
-              <p className="text-sm text-muted-foreground">{categories.length} kategori gjithsej</p>
+              <p className="text-sm text-muted-foreground">{topLevelCats.length} kategori kryesore · {categories.filter(c => c.parent_id).length} nënkategori</p>
             </div>
 
-            {/* Add new category */}
-            <div className="flex gap-3 mb-8">
-              <Input
-                value={newCatName}
-                onChange={(e) => setNewCatName(e.target.value)}
-                placeholder="Emri i kategorisë së re..."
-                className="bg-card max-w-sm"
-                onKeyDown={(e) => { if (e.key === "Enter") handleAddCategory(); }}
-              />
-              <Button onClick={handleAddCategory} disabled={savingCat || !newCatName.trim()} className="gap-2 shrink-0">
-                {savingCat ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
-                Shto
-              </Button>
+            {/* Add new category form */}
+            <div className="bg-card border border-border rounded-xl p-5 mb-8 space-y-3">
+              <h3 className="text-sm font-semibold text-foreground">Shto Kategori / Nënkategori</h3>
+              <div className="flex flex-wrap gap-3 items-end">
+                <div className="flex-1 min-w-[160px]">
+                  <label className="text-xs text-muted-foreground mb-1 block">Emri *</label>
+                  <Input
+                    value={newCatName}
+                    onChange={(e) => setNewCatName(e.target.value)}
+                    placeholder="Emri i kategorisë..."
+                    className="bg-background"
+                    onKeyDown={(e) => { if (e.key === "Enter") handleAddCategory(); }}
+                  />
+                </div>
+                <div className="min-w-[160px]">
+                  <label className="text-xs text-muted-foreground mb-1 block">Kategori Prind (për nënkategori)</label>
+                  <select value={newCatParentId} onChange={(e) => setNewCatParentId(e.target.value)} className="w-full text-sm bg-background border border-border rounded-md px-3 py-2 text-foreground">
+                    <option value="">— Kategori kryesore —</option>
+                    {topLevelCats.map((c) => (<option key={c.id} value={c.id}>{c.name}</option>))}
+                  </select>
+                </div>
+                <div className="flex items-center gap-2 pb-1">
+                  <input type="checkbox" id="newCatChildren" checked={newCatIsChildren} onChange={(e) => setNewCatIsChildren(e.target.checked)} className="rounded border-border" />
+                  <label htmlFor="newCatChildren" className="text-sm font-medium">🧒 Për Fëmijë</label>
+                </div>
+                <Button onClick={handleAddCategory} disabled={savingCat || !newCatName.trim()} className="gap-2 shrink-0">
+                  {savingCat ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
+                  Shto
+                </Button>
+              </div>
             </div>
 
             {loadingCats ? (
@@ -427,37 +511,61 @@ const Admin = () => {
                 <p className="text-muted-foreground">Shtoni kategorinë e parë duke përdorur fushën sipër.</p>
               </div>
             ) : (
-              <div className="space-y-2">
-                {categories.map((cat) => (
-                  <div key={cat.id} className="flex items-center gap-3 bg-card p-4 rounded-xl border border-border">
-                    {editingCat?.id === cat.id ? (
-                      <>
-                        <Input
-                          value={editCatName}
-                          onChange={(e) => setEditCatName(e.target.value)}
-                          className="bg-background flex-1"
-                          onKeyDown={(e) => { if (e.key === "Enter") handleUpdateCategory(); }}
-                          autoFocus
-                        />
-                        <Button size="sm" onClick={handleUpdateCategory} disabled={savingCat} className="gap-1">
-                          {savingCat ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Save className="h-3.5 w-3.5" />}
-                          Ruaj
-                        </Button>
-                        <Button size="sm" variant="outline" onClick={() => { setEditingCat(null); setEditCatName(""); }}>Anulo</Button>
-                      </>
-                    ) : (
-                      <>
-                        <Tag className="h-4 w-4 text-primary shrink-0" />
-                        <span className="flex-1 text-sm font-medium">{cat.name}</span>
-                        <span className="text-xs text-muted-foreground">{books.filter(b => b.genre === cat.name).length} libra</span>
-                        <button onClick={() => { setEditingCat(cat); setEditCatName(cat.name); }} className="p-2 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"><Pencil className="h-4 w-4" /></button>
-                        <button onClick={() => handleDeleteCategory(cat.id)} disabled={deletingCat === cat.id} className="p-2 rounded-lg text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors">
-                          {deletingCat === cat.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
-                        </button>
-                      </>
-                    )}
-                  </div>
-                ))}
+              <div className="space-y-3">
+                {topLevelCats.map((cat) => {
+                  const subcats = categories.filter((c) => c.parent_id === cat.id);
+                  return (
+                    <div key={cat.id} className="bg-card border border-border rounded-xl overflow-hidden">
+                      {/* Parent category row */}
+                      <div className="flex items-center gap-3 p-4">
+                        {editingCat?.id === cat.id ? (
+                          <>
+                            <Input value={editCatName} onChange={(e) => setEditCatName(e.target.value)} className="bg-background flex-1" onKeyDown={(e) => { if (e.key === "Enter") handleUpdateCategory(); }} autoFocus />
+                            <div className="flex items-center gap-1.5">
+                              <input type="checkbox" id={`ec-${cat.id}`} checked={editCatIsChildren} onChange={(e) => setEditCatIsChildren(e.target.checked)} className="rounded border-border" />
+                              <label htmlFor={`ec-${cat.id}`} className="text-xs">Për Fëmijë</label>
+                            </div>
+                            <Button size="sm" onClick={handleUpdateCategory} disabled={savingCat} className="gap-1">{savingCat ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Save className="h-3.5 w-3.5" />}Ruaj</Button>
+                            <Button size="sm" variant="outline" onClick={() => { setEditingCat(null); setEditCatName(""); setEditCatIsChildren(false); }}>Anulo</Button>
+                          </>
+                        ) : (
+                          <>
+                            <Tag className="h-4 w-4 text-primary shrink-0" />
+                            <span className="flex-1 text-sm font-semibold">{cat.name}</span>
+                            {cat.is_children && <span className="text-xs bg-yellow-400/20 text-yellow-600 px-2 py-0.5 rounded-full font-medium">🧒 Fëmijë</span>}
+                            <span className="text-xs text-muted-foreground">{books.filter(b => b.genre === cat.name).length} libra</span>
+                            <button onClick={() => { setEditingCat(cat); setEditCatName(cat.name); setEditCatIsChildren(cat.is_children); }} className="p-2 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"><Pencil className="h-4 w-4" /></button>
+                            <button onClick={() => handleDeleteCategory(cat.id)} disabled={deletingCat === cat.id} className="p-2 rounded-lg text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors">
+                              {deletingCat === cat.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
+                            </button>
+                          </>
+                        )}
+                      </div>
+                      {/* Subcategory rows */}
+                      {subcats.map((sub) => (
+                        <div key={sub.id} className="flex items-center gap-3 px-4 py-3 border-t border-border/50 bg-muted/30">
+                          {editingCat?.id === sub.id ? (
+                            <>
+                              <span className="w-4 text-muted-foreground/40 text-xs">↳</span>
+                              <Input value={editCatName} onChange={(e) => setEditCatName(e.target.value)} className="bg-background flex-1 h-8 text-sm" onKeyDown={(e) => { if (e.key === "Enter") handleUpdateCategory(); }} autoFocus />
+                              <Button size="sm" onClick={handleUpdateCategory} disabled={savingCat} className="gap-1 h-8">{savingCat ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Save className="h-3.5 w-3.5" />}Ruaj</Button>
+                              <Button size="sm" variant="outline" onClick={() => { setEditingCat(null); setEditCatName(""); }} className="h-8">Anulo</Button>
+                            </>
+                          ) : (
+                            <>
+                              <span className="text-muted-foreground/40 text-xs pl-1">↳</span>
+                              <span className="flex-1 text-sm text-muted-foreground">{sub.name}</span>
+                              <button onClick={() => { setEditingCat(sub); setEditCatName(sub.name); setEditCatIsChildren(sub.is_children); }} className="p-1.5 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"><Pencil className="h-3.5 w-3.5" /></button>
+                              <button onClick={() => handleDeleteCategory(sub.id)} disabled={deletingCat === sub.id} className="p-1.5 rounded-lg text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors">
+                                {deletingCat === sub.id ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Trash2 className="h-3.5 w-3.5" />}
+                              </button>
+                            </>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  );
+                })}
               </div>
             )}
           </>

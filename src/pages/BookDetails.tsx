@@ -62,7 +62,31 @@ const BookDetails = () => {
             <h1 className="font-serif text-3xl md:text-4xl font-bold mt-2 mb-2">{book.title}</h1>
             <p className="text-muted-foreground mb-4">nga {book.author}</p>
 
-            <p className="text-muted-foreground leading-relaxed mb-8">{book.description}</p>
+            <p className="text-muted-foreground leading-relaxed mb-6">{book.description}</p>
+
+            {/* Extra book details */}
+            {(book.publisher || book.pages || book.year) && (
+              <div className="flex flex-wrap gap-x-6 gap-y-2 mb-6 text-sm">
+                {book.publisher && (
+                  <div className="flex flex-col">
+                    <span className="text-xs text-muted-foreground uppercase tracking-wide font-medium">Shtëpia Botuese</span>
+                    <span className="font-medium text-foreground">{book.publisher}</span>
+                  </div>
+                )}
+                {book.pages && (
+                  <div className="flex flex-col">
+                    <span className="text-xs text-muted-foreground uppercase tracking-wide font-medium">Faqe</span>
+                    <span className="font-medium text-foreground">{book.pages}</span>
+                  </div>
+                )}
+                {book.year && (
+                  <div className="flex flex-col">
+                    <span className="text-xs text-muted-foreground uppercase tracking-wide font-medium">Viti i Botimit</span>
+                    <span className="font-medium text-foreground">{book.year}</span>
+                  </div>
+                )}
+              </div>
+            )}
 
             <div className="flex items-center gap-4 mb-8">
               <div className="flex flex-col">

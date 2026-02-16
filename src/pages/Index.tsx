@@ -19,7 +19,7 @@ const fadeUp = {
 
 const Index = () => {
   const { books, featuredBooks } = useBooks();
-  const { categories } = useCategories();
+  const { categoryObjects } = useCategories();
 
   return (
     <div className="min-h-screen bg-background">
@@ -139,11 +139,12 @@ const Index = () => {
             <p className="text-muted-foreground">Gjeni zhanrin tuaj të preferuar</p>
           </motion.div>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-            {categories.map((genre, i) => {
-              const genreBookCount = books.filter(b => b.genre === genre).length;
+            {categoryObjects.map((cat, i) => {
+              const genreBookCount = books.filter(b => b.genre === cat.name).length;
+              const isKids = cat.is_children;
               return (
                 <motion.div
-                  key={genre}
+                  key={cat.name}
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
@@ -151,15 +152,22 @@ const Index = () => {
                   className="h-full"
                 >
                   <Link
-                    to={`/librat?genre=${genre}`}
-                    className="group flex flex-col justify-between h-full rounded-xl bg-gradient-to-br from-background to-muted border border-border p-5 hover:border-primary/50 transition-all duration-300 hover:shadow-xl hover:shadow-primary/10 hover:-translate-y-1"
+                    to={`/librat?genre=${cat.name}`}
+                    className={`group flex flex-col justify-between h-full rounded-xl p-5 transition-all duration-300 hover:-translate-y-1 ${
+                      isKids
+                        ? "bg-gradient-to-br from-yellow-50 to-pink-50 border-2 border-pink-200 hover:border-yellow-400 hover:shadow-xl hover:shadow-pink-200/50"
+                        : "bg-gradient-to-br from-background to-muted border border-border hover:border-primary/50 hover:shadow-xl hover:shadow-primary/10"
+                    }`}
                   >
                     <div>
-                      <h3 className="font-serif font-bold text-lg mb-2 group-hover:text-primary transition-colors duration-300">{genre}</h3>
+                      {isKids && <div className="text-2xl mb-2">🧒</div>}
+                      <h3 className={`font-serif font-bold text-lg mb-2 transition-colors duration-300 ${isKids ? "text-pink-600 group-hover:text-purple-600" : "group-hover:text-primary"}`}>
+                        {cat.name}
+                      </h3>
                     </div>
                     <div className="flex items-center justify-between mt-4">
                       <span className="text-xs text-muted-foreground font-medium">{genreBookCount} libra</span>
-                      <ArrowRight className="h-4 w-4 text-primary/40 group-hover:text-primary group-hover:translate-x-1 transition-all duration-300" />
+                      <ArrowRight className={`h-4 w-4 group-hover:translate-x-1 transition-all duration-300 ${isKids ? "text-pink-400 group-hover:text-pink-600" : "text-primary/40 group-hover:text-primary"}`} />
                     </div>
                   </Link>
                 </motion.div>

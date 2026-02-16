@@ -10,11 +10,15 @@ interface DbBook {
   price: number;
   discount: number;
   genre: string;
+  subcategory?: string;
   description: string;
   rating: number;
   cover: string;
   featured: boolean;
   created_at: string;
+  publisher?: string;
+  pages?: number;
+  year?: number;
 }
 
 function dbToBook(db: DbBook): Book {
@@ -25,10 +29,14 @@ function dbToBook(db: DbBook): Book {
     price: db.price,
     discount: db.discount ?? 0,
     genre: db.genre,
+    subcategory: db.subcategory ?? undefined,
     description: db.description,
     rating: db.rating,
     cover: optimizeBookCover(db.cover),
     reviews: [],
+    publisher: db.publisher ?? undefined,
+    pages: db.pages ?? undefined,
+    year: db.year ?? undefined,
   };
 }
 
