@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { CartProvider } from "@/contexts/CartContext";
 import { AuthProvider } from "@/contexts/AuthContext";
 import FloatingCart from "@/components/FloatingCart";
+import Navbar from "@/components/Navbar";
 import Index from "./pages/Index";
 import About from "./pages/About";
 import Books from "./pages/Books";
@@ -29,6 +30,13 @@ const ScrollToTop = () => {
   return null;
 };
 
+// Renders Navbar for all routes except admin and login
+const AppNavbar = () => {
+  const { pathname } = useLocation();
+  if (pathname === "/admin" || pathname === "/login") return null;
+  return <Navbar />;
+};
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
@@ -38,6 +46,7 @@ const App = () => (
           <Sonner />
           <BrowserRouter>
             <ScrollToTop />
+            <AppNavbar />
             <FloatingCart />
             <Routes>
               <Route path="/" element={<Index />} />

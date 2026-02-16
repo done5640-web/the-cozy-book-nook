@@ -4,7 +4,6 @@ import { ArrowRight, BookOpen } from "lucide-react";
 import { useBooks } from "@/hooks/use-books";
 import { useCategories } from "@/hooks/use-categories";
 import BookCard from "@/components/BookCard";
-import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 
@@ -23,7 +22,6 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <Navbar />
 
       {/* Hero */}
       <section className="relative overflow-hidden min-h-[70vh] md:min-h-[80vh] flex items-center -mt-16 pt-16">
