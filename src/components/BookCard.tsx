@@ -54,7 +54,7 @@ const BookCard = ({ book, childrenTheme = false }: BookCardProps) => {
             <p className="text-xs md:text-sm text-slate-400 mb-2">{book.author}</p>
           </Link>
           <div className="flex items-center justify-between gap-1 min-w-0">
-            <div className="flex flex-col min-w-0 shrink">
+            <div className="flex flex-col justify-end min-h-[2.75rem] min-w-0 shrink">
               {book.discount > 0 ? (
                 <>
                   <div className="flex items-center gap-1 flex-wrap">
@@ -122,7 +122,7 @@ const BookCard = ({ book, childrenTheme = false }: BookCardProps) => {
           <p className="text-xs md:text-sm text-muted-foreground mb-2">{book.author}</p>
         </Link>
         <div className="flex items-center justify-between gap-1 min-w-0">
-          <div className="flex flex-col min-w-0 shrink">
+          <div className="flex flex-col justify-end min-h-[2.75rem] min-w-0 shrink">
             {book.discount > 0 ? (
               <>
                 <div className="flex items-center gap-1 flex-wrap">
