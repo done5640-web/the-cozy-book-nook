@@ -48,7 +48,7 @@ const Navbar = () => {
       }`}>
         <div className="container mx-auto px-4 py-3 flex items-center justify-between">
           <a href="/" onClick={handleLogoClick} className="flex items-center gap-2 sm:gap-3 group shrink-0">
-            <img src="/logo-libraria.png" alt="Stacioni i Librarisë" className="h-6 sm:h-7 w-auto shrink-0 transition-transform duration-300 group-hover:scale-105" />
+            <img src="/logo-libraria.png" alt="Stacioni i Librarisë" fetchPriority="high" decoding="async" className="h-6 sm:h-7 w-auto shrink-0 transition-transform duration-300 group-hover:scale-105" />
             <span className={`font-brand text-[10px] sm:text-sm md:text-lg font-semibold tracking-wider uppercase leading-none translate-y-[1px] transition-colors duration-700 ${
               isChildrenTheme ? "text-purple-600" : "text-primary"
             }`}>

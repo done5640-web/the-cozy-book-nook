@@ -21,7 +21,7 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="col-span-1 md:col-span-2">
             <div className="flex items-center gap-3 mb-4">
-              <img src="/logo-libraria.png" alt="Logo" className="h-9 w-auto" />
+              <img src="/logo-libraria.png" alt="Logo" decoding="async" className="h-9 w-auto" />
               <span className={`font-brand text-lg font-semibold tracking-wider uppercase transition-colors duration-700 ${
                 isChildrenTheme ? "text-purple-600" : "text-primary"
               }`}>

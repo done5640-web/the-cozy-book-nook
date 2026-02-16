@@ -21,6 +21,8 @@
     <meta name="twitter:title" content="Stacioni i Librarisë" />
     <meta name="twitter:description" content="Porosi në të gjithë botën — librat tuaj të preferuar, kudo që jeni." />
     <meta name="twitter:image" content="https://www.stacionilibrarise.al/preview-libraria.jpg" />
+    <!-- Preload logo so it's ready before React mounts (no late-load flicker on mobile) -->
+    <link rel="preload" as="image" href="/logo-libraria.png" fetchpriority="high" />
     <link rel="preload" as="image" href="https://images.unsplash.com/photo-1507842217343-583bb7270b66?w=1024&q=30" />
     <link rel="preload" as="image" href="https://images.unsplash.com/photo-1521587760476-6c12a4b040da?w=1024&q=30" />
     <link rel="preload" as="image" href="https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=1024&q=30" />
