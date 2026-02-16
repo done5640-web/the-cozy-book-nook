@@ -5,6 +5,7 @@ import { ShoppingCart, Check } from "lucide-react";
 import { Book, discountedPrice } from "@/data/books";
 import { useCart } from "@/contexts/CartContext";
 import { Button } from "@/components/ui/button";
+import { cacheBookGenre } from "@/pages/BookDetails";
 
 interface BookCardProps {
   book: Book;
@@ -23,6 +24,9 @@ const BookCard = ({ book, childrenTheme = false }: BookCardProps) => {
     setTimeout(() => setJustAdded(false), 1200);
   };
 
+  // Cache bookId→genre before navigating so BookDetails gets theme instantly
+  const handleLinkClick = () => cacheBookGenre(book.id, book.genre);
+
   if (childrenTheme) {
     return (
       <motion.div
@@ -30,7 +34,7 @@ const BookCard = ({ book, childrenTheme = false }: BookCardProps) => {
         transition={{ duration: 0.25, ease: "easeOut" }}
         className="bg-white rounded-2xl overflow-hidden border border-purple-100 group hover:border-purple-300 hover:shadow-xl hover:shadow-purple-100/60 transition-all duration-300"
       >
-        <Link to={`/librat/${book.id}`}>
+        <Link to={`/librat/${book.id}`} onClick={handleLinkClick}>
           <div className="aspect-[2/3] overflow-hidden relative">
             <img
               src={book.cover}
@@ -42,7 +46,7 @@ const BookCard = ({ book, childrenTheme = false }: BookCardProps) => {
           </div>
         </Link>
         <div className="p-2.5 md:p-4">
-          <Link to={`/librat/${book.id}`}>
+          <Link to={`/librat/${book.id}`} onClick={handleLinkClick}>
             <p className="text-xs text-purple-400 font-semibold mb-1">{book.genre}</p>
             <h3 className="font-serif font-bold text-sm md:text-base mb-1 line-clamp-1 text-slate-700 group-hover:text-purple-600 transition-colors duration-200">
               {book.title}
@@ -99,7 +103,7 @@ const BookCard = ({ book, childrenTheme = false }: BookCardProps) => {
       transition={{ duration: 0.25, ease: "easeOut" }}
       className="bg-card rounded-lg overflow-hidden border border-border group hover:border-primary/40 hover:shadow-xl hover:shadow-primary/10 transition-[border-color,box-shadow] duration-300"
     >
-      <Link to={`/librat/${book.id}`}>
+      <Link to={`/librat/${book.id}`} onClick={handleLinkClick}>
         <div className="aspect-[2/3] overflow-hidden">
           <img
             src={book.cover}
@@ -110,7 +114,7 @@ const BookCard = ({ book, childrenTheme = false }: BookCardProps) => {
         </div>
       </Link>
       <div className="p-2.5 md:p-4">
-        <Link to={`/librat/${book.id}`}>
+        <Link to={`/librat/${book.id}`} onClick={handleLinkClick}>
           <p className="text-xs text-primary font-medium mb-1">{book.genre}</p>
           <h3 className="font-serif font-semibold text-sm md:text-base mb-1 line-clamp-1 hover:text-primary transition-colors duration-200">
             {book.title}

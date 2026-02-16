@@ -1,6 +1,7 @@
+import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, ShoppingCart, Sparkles } from "lucide-react";
+import { ArrowLeft, ShoppingCart, Sparkles, Check } from "lucide-react";
 import { useBooks } from "@/hooks/use-books";
 import { useCategories, getCachedChildrenMap } from "@/hooks/use-categories";
 import { useCart } from "@/contexts/CartContext";
@@ -50,23 +51,62 @@ const FLOATER_DATA = Array.from({ length: 10 }, (_, i) => ({
   } as React.CSSProperties,
 }));
 
+// ── Cache helpers: store bookId→genre so BookDetails knows genre before books load ──
+const BOOK_GENRE_CACHE_KEY = "book_genre_cache";
+
+export function cacheBookGenre(bookId: string, genre: string) {
+  try {
+    const raw = localStorage.getItem(BOOK_GENRE_CACHE_KEY);
+    const map: Record<string, string> = raw ? JSON.parse(raw) : {};
+    map[bookId] = genre;
+    // Keep cache small — only last 50 books
+    const keys = Object.keys(map);
+    if (keys.length > 50) delete map[keys[0]];
+    localStorage.setItem(BOOK_GENRE_CACHE_KEY, JSON.stringify(map));
+  } catch { /* ignore */ }
+}
+
+function getCachedBookGenre(bookId: string): string | null {
+  try {
+    const raw = localStorage.getItem(BOOK_GENRE_CACHE_KEY);
+    if (!raw) return null;
+    const map: Record<string, string> = JSON.parse(raw);
+    return map[bookId] ?? null;
+  } catch { return null; }
+}
+
 const BookDetails = () => {
   const { id } = useParams();
   const { addToCart } = useCart();
   const { books } = useBooks();
   const { categoryObjects } = useCategories();
+  const [justAdded, setJustAdded] = useState(false);
   const book = books.find((b) => b.id === id);
 
-  // Use cached map for instant theme detection before Supabase responds (no flash on reload)
+  // ── Flash-free theme detection ──────────────────────────────────────────────
+  // Priority order:
+  // 1. Live categoryObjects (after Supabase responds) — most accurate
+  // 2. Cached is_children map by genre name (from use-categories localStorage)
+  // 3. Cached genre by bookId (written by BookCard when navigating here)
+  // This means the correct theme is applied immediately, even before books load.
   const cachedMap = getCachedChildrenMap();
-  const activeCategory = book ? categoryObjects.find((c) => c.name === book.genre) : null;
-  const isChildrenTheme = book
-    ? (activeCategory ? activeCategory.is_children : (cachedMap[book.genre] ?? false))
+  const cachedGenre = id ? getCachedBookGenre(id) : null;
+  const genreToCheck = book?.genre ?? cachedGenre ?? null;
+  const activeCategory = genreToCheck ? categoryObjects.find((c) => c.name === genreToCheck) : null;
+  const isChildrenTheme = genreToCheck
+    ? (activeCategory ? activeCategory.is_children : (cachedMap[genreToCheck] ?? false))
     : false;
+
+  const handleAddToCart = () => {
+    if (!book || justAdded) return;
+    addToCart(book);
+    setJustAdded(true);
+    setTimeout(() => setJustAdded(false), 1200);
+  };
 
   if (!book) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className={`min-h-screen transition-colors duration-700 ${isChildrenTheme ? "bg-gradient-to-br from-[#FEF9EC] via-[#FDF0F8] to-[#EEF5FF]" : "bg-background"}`}>
         <Navbar />
         <div className="container mx-auto px-4 py-20 text-center">
           <h1 className="font-serif text-2xl font-bold mb-4">Libri nuk u gjet</h1>
@@ -188,13 +228,49 @@ const BookDetails = () => {
                   </span>
                 )}
               </div>
-              <Button
-                size="lg"
-                onClick={() => addToCart(book)}
-                className={`gap-2 ${isChildrenTheme ? "bg-gradient-to-r from-violet-500 to-purple-600 hover:from-violet-600 hover:to-purple-700 text-white border-0" : ""}`}
-              >
-                <ShoppingCart className="h-4 w-4" /> Shto në Shportë
-              </Button>
+
+              {/* Add to cart button with tick feedback */}
+              <motion.div whileTap={{ scale: 0.93 }}>
+                <Button
+                  size="lg"
+                  onClick={handleAddToCart}
+                  className={`gap-2 min-w-[160px] transition-all duration-300 ${
+                    justAdded
+                      ? isChildrenTheme
+                        ? "bg-green-500 hover:bg-green-500 border-0 text-white"
+                        : "bg-green-600 hover:bg-green-600 border-green-600"
+                      : isChildrenTheme
+                        ? "bg-gradient-to-r from-violet-500 to-purple-600 hover:from-violet-600 hover:to-purple-700 text-white border-0"
+                        : ""
+                  }`}
+                >
+                  <AnimatePresence mode="wait" initial={false}>
+                    {justAdded ? (
+                      <motion.span
+                        key="check"
+                        initial={{ scale: 0, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        exit={{ scale: 0, opacity: 0 }}
+                        transition={{ duration: 0.2 }}
+                        className="flex items-center gap-2"
+                      >
+                        <Check className="h-4 w-4" /> U Shtua!
+                      </motion.span>
+                    ) : (
+                      <motion.span
+                        key="cart"
+                        initial={{ scale: 0, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        exit={{ scale: 0, opacity: 0 }}
+                        transition={{ duration: 0.2 }}
+                        className="flex items-center gap-2"
+                      >
+                        <ShoppingCart className="h-4 w-4" /> Shto në Shportë
+                      </motion.span>
+                    )}
+                  </AnimatePresence>
+                </Button>
+              </motion.div>
             </div>
           </motion.div>
         </div>
