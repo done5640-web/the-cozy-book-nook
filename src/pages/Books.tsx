@@ -56,6 +56,104 @@ const FLOATER_DATA = Array.from({ length: 14 }, (_, i) => ({
   } as React.CSSProperties,
 }));
 
+// ── Magical cloud transition overlay ──────────────────────────────────────────
+// A wave of soft rounded "clouds" sweeps up from the bottom then fades out
+const CLOUD_COUNT = 9;
+function MagicTransition({ onDone }: { onDone: () => void }) {
+  return (
+    <motion.div
+      className="fixed inset-0 z-50 pointer-events-none overflow-hidden"
+      initial={{ opacity: 1 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.4, delay: 0.7 }}
+      onAnimationComplete={onDone}
+    >
+      {/* Pastel wash that sweeps up */}
+      <motion.div
+        className="absolute inset-0"
+        style={{ background: "linear-gradient(to top, #E8D5F5 0%, #FDF0F8 50%, #EEF5FF 100%)" }}
+        initial={{ y: "100%" }}
+        animate={{ y: ["100%", "0%", "0%", "-100%"] }}
+        transition={{ duration: 1.1, times: [0, 0.35, 0.55, 1], ease: "easeInOut" }}
+      />
+      {/* Cloud blobs that float up and through */}
+      {Array.from({ length: CLOUD_COUNT }, (_, i) => (
+        <motion.div
+          key={i}
+          className="absolute rounded-full"
+          style={{
+            width: `${90 + (i % 4) * 55}px`,
+            height: `${55 + (i % 3) * 30}px`,
+            left: `${(i * 11) % 100}%`,
+            background: ["#F9A8D4","#C4B5FD","#93C5FD","#FDE68A","#6EE7B7"][i % 5],
+            opacity: 0.55,
+            filter: "blur(2px)",
+          }}
+          initial={{ y: "110vh", scale: 0.7 }}
+          animate={{ y: [" 110vh", "60vh", "-20vh"], scale: [0.7, 1.1, 0.85] }}
+          transition={{
+            duration: 1.0,
+            delay: i * 0.06,
+            ease: [0.22, 1, 0.36, 1],
+          }}
+        />
+      ))}
+      {/* Sparkle dots burst in center */}
+      {[...Array(6)].map((_, i) => (
+        <motion.div
+          key={`dot-${i}`}
+          className="absolute rounded-full"
+          style={{
+            width: 10, height: 10,
+            left: `${40 + Math.cos(i * 60 * Math.PI / 180) * 12}%`,
+            top: `${48 + Math.sin(i * 60 * Math.PI / 180) * 8}%`,
+            background: ["#C4B5FD","#F9A8D4","#93C5FD","#FDE68A","#6EE7B7","#C4B5FD"][i],
+          }}
+          initial={{ scale: 0, opacity: 0 }}
+          animate={{ scale: [0, 1.6, 0], opacity: [0, 1, 0] }}
+          transition={{ duration: 0.6, delay: 0.3 + i * 0.05 }}
+        />
+      ))}
+    </motion.div>
+  );
+}
+
+// ── Animated rainbow border button for children category ─────────────────────
+function KidsFilterButton({ label, isActive, onClick }: { label: string; isActive: boolean; onClick: () => void }) {
+  return (
+    <motion.button
+      onClick={onClick}
+      whileTap={{ scale: 0.93 }}
+      className="relative text-sm font-medium px-3 py-1.5 rounded-md overflow-hidden focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-400"
+      style={{ padding: "1.5px" }} // gap for animated border
+    >
+      {/* Animated gradient border ring */}
+      <motion.span
+        className="absolute inset-0 rounded-md"
+        style={{
+          background: isActive
+            ? "linear-gradient(135deg, #9333EA, #EC4899, #3B82F6, #9333EA)"
+            : "linear-gradient(135deg, #C4B5FD, #F9A8D4, #93C5FD, #C4B5FD)",
+          backgroundSize: "300% 300%",
+        }}
+        animate={{ backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"] }}
+        transition={{ duration: 2.5, repeat: Infinity, ease: "linear" }}
+      />
+      {/* Inner fill */}
+      <span
+        className={`relative flex items-center gap-1 px-3 py-1 rounded-[5px] text-sm font-medium transition-colors ${
+          isActive
+            ? "bg-transparent text-white"
+            : "bg-white/90 text-purple-600 hover:bg-white"
+        }`}
+      >
+        {label}
+      </span>
+    </motion.button>
+  );
+}
+
 const Books = () => {
   const { books } = useBooks();
   const { categories, categoryObjects } = useCategories();
@@ -66,10 +164,20 @@ const Books = () => {
   const [page, setPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState(searchParams.get("q") || "");
   const searchInputRef = useRef<HTMLInputElement>(null);
+  const [showMagicTransition, setShowMagicTransition] = useState(false);
+  const prevIsChildrenRef = useRef(false);
 
   // Detect children theme
   const activeCategory = categoryObjects.find((c) => c.name === selectedGenre);
   const isChildrenTheme = activeCategory?.is_children ?? false;
+
+  // Trigger magic transition when switching INTO children theme
+  useEffect(() => {
+    if (isChildrenTheme && !prevIsChildrenRef.current) {
+      setShowMagicTransition(true);
+    }
+    prevIsChildrenRef.current = isChildrenTheme;
+  }, [isChildrenTheme]);
 
   // Subcategories of selected genre
   const subcategories = activeCategory?.subcategories ?? [];
@@ -136,6 +244,13 @@ const Books = () => {
 
   return (
     <div className={`min-h-screen transition-colors duration-700 relative overflow-x-hidden ${isChildrenTheme ? "bg-gradient-to-br from-[#FEF9EC] via-[#FDF0F8] to-[#EEF5FF]" : "bg-background"}`}>
+
+      {/* Magical transition overlay when entering children theme */}
+      <AnimatePresence>
+        {showMagicTransition && (
+          <MagicTransition onDone={() => setShowMagicTransition(false)} />
+        )}
+      </AnimatePresence>
 
       {/* Elegant floating shapes for children theme */}
       <AnimatePresence>
@@ -283,13 +398,22 @@ const Books = () => {
               const catObj = categoryObjects.find((c) => c.name === genre);
               const isKids = catObj?.is_children ?? false;
               const isActive = selectedGenre === genre;
+              if (isKids) {
+                return (
+                  <KidsFilterButton
+                    key={genre}
+                    label={genre}
+                    isActive={isActive}
+                    onClick={() => handleGenre(genre)}
+                  />
+                );
+              }
               return (
                 <Button
                   key={genre}
                   variant={isActive ? "default" : "outline"}
                   size="sm"
                   onClick={() => handleGenre(genre)}
-                  className={isKids && !isActive ? "border-purple-300 text-purple-600 hover:bg-purple-50" : ""}
                 >
                   {genre}
                 </Button>
