@@ -236,8 +236,12 @@ const BookDetails = () => {
                   onClick={handleAddToCart}
                   className={`gap-2 min-w-[160px] transition-all duration-300 ${
                     justAdded
-                      ? "bg-green-600 hover:bg-green-600 border-green-600"
-                      : ""
+                      ? isChildrenTheme
+                        ? "bg-green-500 hover:bg-green-500 border-0 text-white"
+                        : "bg-green-600 hover:bg-green-600 border-green-600"
+                      : isChildrenTheme
+                        ? "bg-gradient-to-r from-violet-500 to-purple-600 hover:from-violet-600 hover:to-purple-700 text-white border-0"
+                        : ""
                   }`}
                 >
                   <AnimatePresence mode="wait" initial={false}>
