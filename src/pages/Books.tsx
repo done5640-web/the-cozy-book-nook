@@ -3,7 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight, Search, X, Sparkles } from "lucide-react";
 import { useBooks } from "@/hooks/use-books";
-import { useCategories } from "@/hooks/use-categories";
+import { useCategories, getCachedChildrenMap } from "@/hooks/use-categories";
 import BookCard from "@/components/BookCard";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -56,65 +56,92 @@ const FLOATER_DATA = Array.from({ length: 14 }, (_, i) => ({
   } as React.CSSProperties,
 }));
 
-// ── Magical cloud transition overlay ──────────────────────────────────────────
-// A wave of soft rounded "clouds" sweeps up from the bottom then fades out
-const CLOUD_COUNT = 9;
+// ── Magical cartoon iris-wipe transition ──────────────────────────────────────
+// A smooth circular wipe expands from the center (like a classic cartoon scene change)
+// then opens up to reveal the new theme, with playful floating stars bursting out.
 function MagicTransition({ onDone }: { onDone: () => void }) {
   return (
     <motion.div
-      className="fixed inset-0 z-50 pointer-events-none overflow-hidden"
+      className="fixed inset-0 z-50 pointer-events-none overflow-hidden flex items-center justify-center"
       initial={{ opacity: 1 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      transition={{ duration: 0.4, delay: 0.7 }}
+      transition={{ duration: 0.5 }}
       onAnimationComplete={onDone}
     >
-      {/* Pastel wash that sweeps up */}
+      {/* The iris: a circle that GROWS to fill the screen, then SHRINKS away */}
       <motion.div
-        className="absolute inset-0"
-        style={{ background: "linear-gradient(to top, #E8D5F5 0%, #FDF0F8 50%, #EEF5FF 100%)" }}
-        initial={{ y: "100%" }}
-        animate={{ y: ["100%", "0%", "0%", "-100%"] }}
-        transition={{ duration: 1.1, times: [0, 0.35, 0.55, 1], ease: "easeInOut" }}
+        className="absolute rounded-full"
+        style={{
+          background: "radial-gradient(circle at center, #E8D5F5 0%, #FDF0F8 45%, #C4B5FD 100%)",
+          top: "50%",
+          left: "50%",
+          translateX: "-50%",
+          translateY: "-50%",
+        }}
+        initial={{ width: 0, height: 0, opacity: 1 }}
+        animate={{
+          width: ["0vmax", "300vmax", "300vmax", "0vmax"],
+          height: ["0vmax", "300vmax", "300vmax", "0vmax"],
+          opacity: [1, 1, 1, 0],
+        }}
+        transition={{
+          duration: 1.15,
+          times: [0, 0.38, 0.58, 1],
+          ease: ["easeIn", "linear", "easeOut", "easeOut"],
+        }}
       />
-      {/* Cloud blobs that float up and through */}
-      {Array.from({ length: CLOUD_COUNT }, (_, i) => (
-        <motion.div
-          key={i}
-          className="absolute rounded-full"
-          style={{
-            width: `${90 + (i % 4) * 55}px`,
-            height: `${55 + (i % 3) * 30}px`,
-            left: `${(i * 11) % 100}%`,
-            background: ["#F9A8D4","#C4B5FD","#93C5FD","#FDE68A","#6EE7B7"][i % 5],
-            opacity: 0.55,
-            filter: "blur(2px)",
-          }}
-          initial={{ y: "110vh", scale: 0.7 }}
-          animate={{ y: [" 110vh", "60vh", "-20vh"], scale: [0.7, 1.1, 0.85] }}
-          transition={{
-            duration: 1.0,
-            delay: i * 0.06,
-            ease: [0.22, 1, 0.36, 1],
-          }}
-        />
-      ))}
-      {/* Sparkle dots burst in center */}
-      {[...Array(6)].map((_, i) => (
-        <motion.div
-          key={`dot-${i}`}
-          className="absolute rounded-full"
-          style={{
-            width: 10, height: 10,
-            left: `${40 + Math.cos(i * 60 * Math.PI / 180) * 12}%`,
-            top: `${48 + Math.sin(i * 60 * Math.PI / 180) * 8}%`,
-            background: ["#C4B5FD","#F9A8D4","#93C5FD","#FDE68A","#6EE7B7","#C4B5FD"][i],
-          }}
-          initial={{ scale: 0, opacity: 0 }}
-          animate={{ scale: [0, 1.6, 0], opacity: [0, 1, 0] }}
-          transition={{ duration: 0.6, delay: 0.3 + i * 0.05 }}
-        />
-      ))}
+
+      {/* Sparkle stars that burst from center during the iris-open */}
+      {[...Array(8)].map((_, i) => {
+        const angle = (i / 8) * 2 * Math.PI;
+        const dist = 120 + (i % 3) * 40;
+        return (
+          <motion.div
+            key={`star-${i}`}
+            className="absolute"
+            style={{
+              top: "50%",
+              left: "50%",
+              translateX: "-50%",
+              translateY: "-50%",
+              width: 10 + (i % 3) * 4,
+              height: 10 + (i % 3) * 4,
+              background: ["#C4B5FD","#F9A8D4","#93C5FD","#FDE68A","#6EE7B7","#F9A8D4","#C4B5FD","#93C5FD"][i],
+              borderRadius: i % 2 === 0 ? "50%" : "2px",
+              transformOrigin: "center",
+            }}
+            initial={{ x: 0, y: 0, scale: 0, opacity: 0, rotate: 0 }}
+            animate={{
+              x: Math.cos(angle) * dist,
+              y: Math.sin(angle) * dist,
+              scale: [0, 1.5, 0],
+              opacity: [0, 1, 0],
+              rotate: [0, 180, 360],
+            }}
+            transition={{
+              duration: 0.7,
+              delay: 0.3 + i * 0.03,
+              ease: [0.22, 1, 0.36, 1],
+            }}
+          />
+        );
+      })}
+
+      {/* A soft ring pulse expanding outward */}
+      <motion.div
+        className="absolute rounded-full border-4"
+        style={{
+          borderColor: "#C4B5FD",
+          top: "50%",
+          left: "50%",
+          translateX: "-50%",
+          translateY: "-50%",
+        }}
+        initial={{ width: 0, height: 0, opacity: 0.8 }}
+        animate={{ width: "200vmax", height: "200vmax", opacity: 0 }}
+        transition={{ duration: 0.9, delay: 0.35, ease: "easeOut" }}
+      />
     </motion.div>
   );
 }
@@ -165,14 +192,27 @@ const Books = () => {
   const [searchQuery, setSearchQuery] = useState(searchParams.get("q") || "");
   const searchInputRef = useRef<HTMLInputElement>(null);
   const [showMagicTransition, setShowMagicTransition] = useState(false);
-  const prevIsChildrenRef = useRef(false);
 
-  // Detect children theme
+  // ── Detect children theme ──────────────────────────────────────────────────
+  // Use cached map from localStorage so the correct theme is applied immediately
+  // on render (before Supabase responds), eliminating the flash on reload.
+  const cachedMap = getCachedChildrenMap();
   const activeCategory = categoryObjects.find((c) => c.name === selectedGenre);
-  const isChildrenTheme = activeCategory?.is_children ?? false;
+  const isChildrenTheme = activeCategory
+    ? activeCategory.is_children
+    : (cachedMap[selectedGenre] ?? false);
 
-  // Trigger magic transition when switching INTO children theme
+  const prevIsChildrenRef = useRef(isChildrenTheme);
+
+  // Trigger magic transition ONLY when the user actively switches INTO children theme
+  // (not on initial page load, even if it starts in children theme)
+  const isFirstRender = useRef(true);
   useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      prevIsChildrenRef.current = isChildrenTheme;
+      return;
+    }
     if (isChildrenTheme && !prevIsChildrenRef.current) {
       setShowMagicTransition(true);
     }
@@ -423,7 +463,11 @@ const Books = () => {
           <select
             value={sortBy}
             onChange={(e) => { setSortBy(e.target.value); setPage(1); }}
-            className={`text-sm border border-border rounded-md px-3 py-2 text-foreground ${isChildrenTheme ? "bg-white/90 border-purple-200" : "bg-card"}`}
+            className={`text-sm rounded-md px-3 py-2 ${
+              isChildrenTheme
+                ? "bg-white border border-purple-200 text-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-300"
+                : "bg-card border border-border text-foreground"
+            }`}
           >
             <option value="default">Renditje</option>
             <option value="price-asc">Çmimi: Ulët → Lartë</option>
@@ -442,7 +486,11 @@ const Books = () => {
             >
               <button
                 onClick={() => handleSubcat("")}
-                className={`text-xs px-3 py-1.5 rounded-full border transition-colors ${selectedSubcat === "" ? "bg-primary text-primary-foreground border-primary" : "border-border text-muted-foreground hover:border-primary/50 hover:text-foreground"}`}
+                className={`text-xs px-3 py-1.5 rounded-full border transition-colors ${
+                  selectedSubcat === ""
+                    ? isChildrenTheme ? "bg-purple-600 text-white border-purple-600" : "bg-primary text-primary-foreground border-primary"
+                    : isChildrenTheme ? "border-purple-300 text-purple-600 bg-white hover:bg-purple-50 hover:border-purple-400" : "border-border text-muted-foreground hover:border-primary/50 hover:text-foreground"
+                }`}
               >
                 Të gjitha
               </button>
@@ -450,7 +498,11 @@ const Books = () => {
                 <button
                   key={sub.id}
                   onClick={() => handleSubcat(sub.name)}
-                  className={`text-xs px-3 py-1.5 rounded-full border transition-colors ${selectedSubcat === sub.name ? "bg-primary text-primary-foreground border-primary" : "border-border text-muted-foreground hover:border-primary/50 hover:text-foreground"}`}
+                  className={`text-xs px-3 py-1.5 rounded-full border transition-colors ${
+                    selectedSubcat === sub.name
+                      ? isChildrenTheme ? "bg-purple-600 text-white border-purple-600" : "bg-primary text-primary-foreground border-primary"
+                      : isChildrenTheme ? "border-purple-300 text-purple-600 bg-white hover:bg-purple-50 hover:border-purple-400" : "border-border text-muted-foreground hover:border-primary/50 hover:text-foreground"
+                  }`}
                 >
                   {sub.name}
                 </button>

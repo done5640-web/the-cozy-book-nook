@@ -17,6 +17,27 @@ export interface Category {
   subcategories: Category[];
 }
 
+// ── LocalStorage cache key ────────────────────────────────────────────────────
+const LS_KEY = "cat_children_map";
+
+/** Returns a map of { [categoryName]: is_children } from localStorage cache.
+ *  This is available synchronously before Supabase responds. */
+export function getCachedChildrenMap(): Record<string, boolean> {
+  try {
+    const raw = localStorage.getItem(LS_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch { /* ignore */ }
+  return {};
+}
+
+function saveChildrenMap(cats: Category[]) {
+  try {
+    const map: Record<string, boolean> = {};
+    cats.forEach((c) => { map[c.name] = c.is_children; });
+    localStorage.setItem(LS_KEY, JSON.stringify(map));
+  } catch { /* ignore */ }
+}
+
 export function useCategories() {
   const [categories, setCategories] = useState<string[]>([]);
   const [categoryObjects, setCategoryObjects] = useState<Category[]>([]);
@@ -53,6 +74,7 @@ export function useCategories() {
 
           setCategoryObjects(built);
           setCategories(topLevel.map((c) => c.name));
+          saveChildrenMap(built); // persist for next reload
         }
       } catch {
         // Supabase not reachable

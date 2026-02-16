@@ -2,7 +2,7 @@ import { useParams, Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, ShoppingCart, Sparkles } from "lucide-react";
 import { useBooks } from "@/hooks/use-books";
-import { useCategories } from "@/hooks/use-categories";
+import { useCategories, getCachedChildrenMap } from "@/hooks/use-categories";
 import { useCart } from "@/contexts/CartContext";
 import { discountedPrice } from "@/data/books";
 import BookCard from "@/components/BookCard";
@@ -57,8 +57,11 @@ const BookDetails = () => {
   const { categoryObjects } = useCategories();
   const book = books.find((b) => b.id === id);
 
+  // Use cached map for instant theme detection before Supabase responds (no flash on reload)
+  const cachedMap = getCachedChildrenMap();
+  const activeCategory = book ? categoryObjects.find((c) => c.name === book.genre) : null;
   const isChildrenTheme = book
-    ? (categoryObjects.find((c) => c.name === book.genre)?.is_children ?? false)
+    ? (activeCategory ? activeCategory.is_children : (cachedMap[book.genre] ?? false))
     : false;
 
   if (!book) {
