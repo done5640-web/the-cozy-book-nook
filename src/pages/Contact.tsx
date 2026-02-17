@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Send, MapPin, Phone, Mail, CheckCircle } from "lucide-react";
+import { toast } from "sonner";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -31,12 +32,22 @@ const Contact = () => {
       if (data.success) {
         setSent(true);
         (e.target as HTMLFormElement).reset();
+        toast.success("Mesazhi u dërgua!", {
+          description: "Do ju përgjigjemi sa më shpejt në email.",
+          duration: 5000,
+        });
         setTimeout(() => setSent(false), 4000);
       } else {
         setError("Diçka shkoi keq. Provoni përsëri.");
+        toast.error("Dërgimi dështoi", {
+          description: "Diçka shkoi keq. Provoni përsëri.",
+        });
       }
     } catch {
       setError("Nuk u lidh me serverin. Provoni përsëri.");
+      toast.error("Gabim rrjeti", {
+        description: "Nuk u lidh me serverin. Provoni përsëri.",
+      });
     } finally {
       setLoading(false);
     }
