@@ -14,7 +14,7 @@ const Footer = () => {
   return (
     <footer className={`border-t mt-16 transition-colors duration-700 ${
       isChildrenTheme
-        ? "bg-white/80 border-purple-400/50"
+        ? "bg-purple-50/80 border-purple-300/60"
         : "bg-card border-border"
     }`}>
       <div className="container mx-auto px-4 py-12">
@@ -29,12 +29,12 @@ const Footer = () => {
               </span>
             </div>
             <p className={`text-sm max-w-md mb-2 transition-colors duration-700 ${
-              isChildrenTheme ? "text-purple-800" : "text-muted-foreground"
+              isChildrenTheme ? "text-purple-700" : "text-muted-foreground"
             }`}>
               Libraria juaj online shqiptare. Librat më të mirë, direkt tek dera juaj.
             </p>
             <p className={`text-xs italic opacity-70 transition-colors duration-700 ${
-              isChildrenTheme ? "text-purple-800" : "text-muted-foreground"
+              isChildrenTheme ? "text-purple-700" : "text-muted-foreground"
             }`}>
               'Uncover a world of imagination'
             </p>
@@ -58,7 +58,7 @@ const Footer = () => {
                   to={link.to}
                   className={`text-sm transition-colors duration-200 ${
                     isChildrenTheme
-                      ? "text-purple-800 hover:text-purple-800"
+                      ? "text-purple-700 hover:text-purple-900"
                       : "text-muted-foreground hover:text-primary"
                   }`}
                 >
@@ -89,7 +89,7 @@ const Footer = () => {
                   aria-label={label}
                   className={`p-2.5 rounded-lg transition-colors duration-200 ${
                     isChildrenTheme
-                      ? "bg-purple-100/40 text-purple-800 hover:bg-purple-100/400 hover:text-white"
+                      ? "bg-purple-200/50 text-purple-800 hover:bg-purple-700 hover:text-white"
                       : "bg-muted hover:bg-primary hover:text-primary-foreground"
                   }`}
                 >
@@ -101,7 +101,7 @@ const Footer = () => {
         </div>
 
         <div className={`border-t mt-8 pt-6 text-center transition-colors duration-700 ${
-          isChildrenTheme ? "border-purple-400/50" : "border-border"
+          isChildrenTheme ? "border-purple-300/50" : "border-border"
         }`}>
           <p className={`text-xs transition-colors duration-700 ${
             isChildrenTheme ? "text-purple-700" : "text-muted-foreground"

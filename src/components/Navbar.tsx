@@ -52,7 +52,7 @@ const Navbar = () => {
     <>
       <nav className={`fixed top-0 left-0 right-0 z-50 backdrop-blur-md border-b transition-colors duration-700 ${
         isChildrenTheme
-          ? "bg-white/95 border-purple-400/50"
+          ? "bg-purple-50/95 border-purple-300/60"
           : "bg-background/95 border-border/50"
       }`}>
         <div className="container mx-auto px-4 py-3 flex items-center justify-between">
@@ -74,8 +74,8 @@ const Navbar = () => {
                 className={`text-sm font-medium transition-colors duration-200 relative pb-1 ${
                   isChildrenTheme
                     ? location.pathname === link.to
-                      ? "text-purple-800 after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-purple-100/400"
-                      : "text-purple-800 hover:text-purple-800"
+                      ? "text-purple-800 after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-purple-700"
+                      : "text-purple-700 hover:text-purple-900"
                     : location.pathname === link.to
                       ? "text-primary after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-primary"
                       : "text-muted-foreground hover:text-primary"
@@ -88,7 +88,7 @@ const Navbar = () => {
             <Link
               to="/shporta"
               className={`relative p-2 rounded-full transition-colors duration-200 ml-2 ${
-                isChildrenTheme ? "hover:bg-purple-100" : "hover:bg-muted"
+                isChildrenTheme ? "hover:bg-purple-200/60" : "hover:bg-muted"
               }`}
             >
               <ShoppingCart className={`h-5 w-5 transition-colors duration-700 ${isChildrenTheme ? "text-purple-800" : "text-foreground"}`} />
@@ -98,7 +98,7 @@ const Navbar = () => {
                   animate={{ scale: 1 }}
                   transition={{ type: "spring", stiffness: 300, damping: 20 }}
                   className={`absolute -top-1 -right-1 text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold transition-colors duration-700 ${
-                    isChildrenTheme ? "bg-purple-100/400 text-white" : "bg-primary text-primary-foreground"
+                    isChildrenTheme ? "bg-purple-700 text-white" : "bg-primary text-primary-foreground"
                   }`}
                 >
                   {totalItems}
@@ -109,13 +109,13 @@ const Navbar = () => {
             {/* Auth buttons */}
             {user ? (
               <div className="flex items-center gap-2 ml-1">
-                <span className={`text-xs truncate max-w-[120px] ${isChildrenTheme ? "text-purple-100/400" : "text-muted-foreground"}`}>
+                <span className={`text-xs truncate max-w-[120px] ${isChildrenTheme ? "text-purple-700" : "text-muted-foreground"}`}>
                   {user.email}
                 </span>
                 <button
                   onClick={handleSignOut}
                   title="Dil"
-                  className={`p-2 rounded-full transition-colors duration-200 ${isChildrenTheme ? "hover:bg-purple-100 text-purple-100/400" : "hover:bg-muted text-muted-foreground hover:text-foreground"}`}
+                  className={`p-2 rounded-full transition-colors duration-200 ${isChildrenTheme ? "hover:bg-purple-200/60 text-purple-700" : "hover:bg-muted text-muted-foreground hover:text-foreground"}`}
                 >
                   <LogOut className="h-4 w-4" />
                 </button>
@@ -126,14 +126,14 @@ const Navbar = () => {
                   variant="ghost"
                   size="sm"
                   onClick={() => navigate("/hyr")}
-                  className={`text-sm font-medium ${isChildrenTheme ? "text-purple-800 hover:bg-purple-100/40" : ""}`}
+                  className={`text-sm font-medium ${isChildrenTheme ? "text-purple-800 hover:bg-purple-200/50" : ""}`}
                 >
                   Hyr
                 </Button>
                 <Button
                   size="sm"
                   onClick={() => navigate("/regjistrohu")}
-                  className={`text-sm font-medium ${isChildrenTheme ? "bg-purple-100/400 hover:bg-purple-800 text-white" : ""}`}
+                  className={`text-sm font-medium ${isChildrenTheme ? "bg-purple-700 hover:bg-purple-800 text-white" : ""}`}
                 >
                   Regjistrohu
                 </Button>
@@ -146,7 +146,7 @@ const Navbar = () => {
             <Link
               to="/shporta"
               className={`relative p-2 rounded-full transition-colors duration-200 ${
-                isChildrenTheme ? "hover:bg-purple-100" : "hover:bg-muted"
+                isChildrenTheme ? "hover:bg-purple-200/60" : "hover:bg-muted"
               }`}
             >
               <ShoppingCart className={`h-5 w-5 transition-colors duration-700 ${isChildrenTheme ? "text-purple-800" : "text-foreground"}`} />
@@ -156,7 +156,7 @@ const Navbar = () => {
                   animate={{ scale: 1 }}
                   transition={{ type: "spring", stiffness: 300, damping: 20 }}
                   className={`absolute -top-1 -right-1 text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold transition-colors duration-700 ${
-                    isChildrenTheme ? "bg-purple-100/400 text-white" : "bg-primary text-primary-foreground"
+                    isChildrenTheme ? "bg-purple-700 text-white" : "bg-primary text-primary-foreground"
                   }`}
                 >
                   {totalItems}
@@ -165,7 +165,7 @@ const Navbar = () => {
             </Link>
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className={`p-2 rounded-full transition-colors duration-200 ${isChildrenTheme ? "hover:bg-purple-100 text-purple-800" : "hover:bg-muted"}`}
+              className={`p-2 rounded-full transition-colors duration-200 ${isChildrenTheme ? "hover:bg-purple-200/60 text-purple-800" : "hover:bg-muted"}`}
               aria-label="Toggle menu"
             >
               {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -182,7 +182,7 @@ const Navbar = () => {
               exit={{ height: 0, opacity: 0 }}
               transition={{ duration: 0.25, ease: "easeInOut" }}
               className={`md:hidden overflow-hidden border-t transition-colors duration-700 ${
-                isChildrenTheme ? "border-purple-400/50 bg-white/95" : "border-border/50"
+                isChildrenTheme ? "border-purple-300/60 bg-purple-50/95" : "border-border/50"
               }`}
             >
               <div className="container mx-auto px-4 py-4 flex flex-col gap-3">
@@ -193,8 +193,8 @@ const Navbar = () => {
                     className={`text-sm font-medium py-2 px-3 rounded-md transition-colors duration-200 text-left ${
                       isChildrenTheme
                         ? location.pathname === link.to
-                          ? "bg-purple-100/400 text-white"
-                          : "text-purple-100/400 hover:bg-purple-100/40"
+                          ? "bg-purple-700 text-white"
+                          : "text-purple-700 hover:bg-purple-200/50"
                         : location.pathname === link.to
                           ? "bg-primary text-primary-foreground"
                           : "text-muted-foreground hover:bg-muted"
@@ -205,17 +205,17 @@ const Navbar = () => {
                 ))}
 
                 {/* Mobile auth */}
-                <div className={`border-t pt-3 mt-1 ${isChildrenTheme ? "border-purple-200/50" : "border-border/50"}`}>
+                <div className={`border-t pt-3 mt-1 ${isChildrenTheme ? "border-purple-300/50" : "border-border/50"}`}>
                   {user ? (
                     <div className="flex flex-col gap-2">
-                      <div className={`flex items-center gap-2 px-3 py-1.5 text-xs ${isChildrenTheme ? "text-purple-100/400" : "text-muted-foreground"}`}>
+                      <div className={`flex items-center gap-2 px-3 py-1.5 text-xs ${isChildrenTheme ? "text-purple-700" : "text-muted-foreground"}`}>
                         <User className="h-3.5 w-3.5" />
                         <span className="truncate">{user.email}</span>
                       </div>
                       <button
                         onClick={handleSignOut}
                         className={`flex items-center gap-2 text-sm font-medium py-2 px-3 rounded-md transition-colors duration-200 text-left ${
-                          isChildrenTheme ? "text-purple-100/400 hover:bg-purple-100/40" : "text-muted-foreground hover:bg-muted"
+                          isChildrenTheme ? "text-purple-700 hover:bg-purple-200/50" : "text-muted-foreground hover:bg-muted"
                         }`}
                       >
                         <LogOut className="h-4 w-4" />
@@ -227,7 +227,7 @@ const Navbar = () => {
                       <button
                         onClick={() => { setIsOpen(false); navigate("/hyr"); }}
                         className={`text-sm font-medium py-2 px-3 rounded-md transition-colors duration-200 text-left ${
-                          isChildrenTheme ? "text-purple-100/400 hover:bg-purple-100/40" : "text-muted-foreground hover:bg-muted"
+                          isChildrenTheme ? "text-purple-700 hover:bg-purple-200/50" : "text-muted-foreground hover:bg-muted"
                         }`}
                       >
                         Hyr
@@ -235,7 +235,7 @@ const Navbar = () => {
                       <button
                         onClick={() => { setIsOpen(false); navigate("/regjistrohu"); }}
                         className={`text-sm font-medium py-2 px-3 rounded-md transition-colors duration-200 text-left ${
-                          isChildrenTheme ? "bg-purple-100/400 text-white" : "bg-primary text-primary-foreground"
+                          isChildrenTheme ? "bg-purple-700 text-white" : "bg-primary text-primary-foreground"
                         }`}
                       >
                         Regjistrohu
