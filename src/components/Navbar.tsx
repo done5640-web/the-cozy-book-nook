@@ -52,7 +52,7 @@ const Navbar = () => {
     <>
       <nav className={`fixed top-0 left-0 right-0 z-50 backdrop-blur-md border-b transition-colors duration-700 ${
         isChildrenTheme
-          ? "bg-purple-50/95 border-purple-300/60"
+          ? "bg-purple-100/95 border-purple-400/60"
           : "bg-background/95 border-border/50"
       }`}>
         <div className="container mx-auto px-4 py-3 flex items-center justify-between">
@@ -182,7 +182,7 @@ const Navbar = () => {
               exit={{ height: 0, opacity: 0 }}
               transition={{ duration: 0.25, ease: "easeInOut" }}
               className={`md:hidden overflow-hidden border-t transition-colors duration-700 ${
-                isChildrenTheme ? "border-purple-300/60 bg-purple-50/95" : "border-border/50"
+                isChildrenTheme ? "border-purple-400/60 bg-purple-100/95" : "border-border/50"
               }`}
             >
               <div className="container mx-auto px-4 py-4 flex flex-col gap-3">

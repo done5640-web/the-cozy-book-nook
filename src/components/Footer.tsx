@@ -14,7 +14,7 @@ const Footer = () => {
   return (
     <footer className={`border-t mt-16 transition-colors duration-700 ${
       isChildrenTheme
-        ? "bg-purple-50/80 border-purple-300/60"
+        ? "bg-purple-100/90 border-purple-400/60"
         : "bg-card border-border"
     }`}>
       <div className="container mx-auto px-4 py-12">

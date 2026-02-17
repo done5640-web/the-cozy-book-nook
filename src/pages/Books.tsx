@@ -193,6 +193,14 @@ const Books = () => {
   const searchInputRef = useRef<HTMLInputElement>(null);
   const [showMagicTransition, setShowMagicTransition] = useState(false);
 
+  // ── Sync state from URL on browser back/forward ────────────────────────────
+  useEffect(() => {
+    setSelectedGenre(searchParams.get("genre") || "Të gjitha");
+    setSelectedSubcat(searchParams.get("subcat") || "");
+    setSearchQuery(searchParams.get("q") || "");
+    setPage(1);
+  }, [searchParams]);
+
   // ── Detect children theme ──────────────────────────────────────────────────
   // Use cached map from localStorage so the correct theme is applied immediately
   // on render (before Supabase responds), eliminating the flash on reload.

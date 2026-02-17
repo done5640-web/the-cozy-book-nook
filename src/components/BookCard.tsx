@@ -32,7 +32,7 @@ const BookCard = ({ book, childrenTheme = false }: BookCardProps) => {
       <motion.div
         whileHover={{ y: -6 }}
         transition={{ duration: 0.25, ease: "easeOut" }}
-        className="bg-white rounded-2xl overflow-hidden border border-purple-200/50 group hover:border-purple-600 hover:shadow-xl hover:shadow-purple-200/40 transition-all duration-300"
+        className="bg-purple-50 rounded-2xl overflow-hidden border border-purple-200 group hover:border-purple-500 hover:shadow-xl hover:shadow-purple-300/40 transition-all duration-300"
       >
         <Link to={`/librat/${book.id}`} onClick={handleLinkClick}>
           <div className="aspect-[2/3] overflow-hidden relative">
