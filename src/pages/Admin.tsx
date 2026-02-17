@@ -2,13 +2,23 @@ import { useState, useEffect } from "react";
 import { Navigate, Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  Plus, Trash2, Pencil, LogOut, Loader2, Save, X, Star, Eye, EyeOff, ImageIcon, Tag, Upload,
+  Plus, Trash2, Pencil, LogOut, Loader2, Save, X, Star, Eye, EyeOff, ImageIcon, Tag, Upload, Users, ShoppingBag, TrendingUp, Calendar,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+
+interface DbOrder {
+  id: string;
+  user_id: string;
+  user_email: string;
+  items: { book_id: string; title: string; quantity: number; price: number }[];
+  total: number;
+  created_at: string;
+}
 
 interface DbBook {
   id: string;
@@ -38,7 +48,19 @@ interface DbCategory {
 
 const Admin = () => {
   const { user, loading: authLoading, signOut } = useAuth();
-  const [tab, setTab] = useState<"books" | "categories">("books");
+  const [tab, setTab] = useState<"books" | "categories" | "users">("books");
+
+  // Orders / users state
+  const [orders, setOrders] = useState<DbOrder[]>([]);
+  const [loadingOrders, setLoadingOrders] = useState(true);
+  const [expandedUser, setExpandedUser] = useState<string | null>(null);
+
+  const fetchOrders = async () => {
+    setLoadingOrders(true);
+    const { data } = await supabase.from("orders").select("*").order("created_at", { ascending: false });
+    if (data) setOrders(data as DbOrder[]);
+    setLoadingOrders(false);
+  };
 
   // Books state
   const [books, setBooks] = useState<DbBook[]>([]);
@@ -85,6 +107,7 @@ const Admin = () => {
     if (user) {
       fetchBooks();
       fetchCategories();
+      fetchOrders();
     }
   }, [user]);
 
@@ -270,6 +293,15 @@ const Admin = () => {
             }`}
           >
             Kategoritë
+          </button>
+          <button
+            onClick={() => setTab("users")}
+            className={`px-4 py-3 text-sm font-medium border-b-2 transition-colors flex items-center gap-1.5 ${
+              tab === "users" ? "border-primary text-primary" : "border-transparent text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            <Users className="h-3.5 w-3.5" />
+            Përdoruesit
           </button>
         </div>
       </div>
@@ -608,6 +640,165 @@ const Admin = () => {
             )}
           </>
         )}
+
+        {/* ======== USERS / ORDERS TAB ======== */}
+        {tab === "users" && (() => {
+          // Group orders by user_email
+          const userMap = new Map<string, DbOrder[]>();
+          for (const o of orders) {
+            const key = o.user_email || o.user_id;
+            if (!userMap.has(key)) userMap.set(key, []);
+            userMap.get(key)!.push(o);
+          }
+          const userList = Array.from(userMap.entries()).map(([email, userOrders]) => ({
+            email,
+            orders: userOrders,
+            total: userOrders.reduce((s, o) => s + (o.total || 0), 0),
+          })).sort((a, b) => b.orders.length - a.orders.length);
+
+          // Analytics: orders per day (last 30 days)
+          const now = new Date();
+          const dayMap = new Map<string, number>();
+          for (let i = 29; i >= 0; i--) {
+            const d = new Date(now);
+            d.setDate(d.getDate() - i);
+            dayMap.set(d.toISOString().slice(0, 10), 0);
+          }
+          for (const o of orders) {
+            const day = o.created_at?.slice(0, 10);
+            if (day && dayMap.has(day)) dayMap.set(day, (dayMap.get(day) || 0) + 1);
+          }
+          const chartData = Array.from(dayMap.entries()).map(([date, count]) => ({
+            date: date.slice(5), // MM-DD
+            porosi: count,
+          }));
+
+          return (
+            <>
+              {/* Summary cards */}
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-8">
+                <div className="bg-card border border-border rounded-xl p-4 flex items-center gap-3">
+                  <div className="p-2 bg-primary/10 rounded-lg"><Users className="h-5 w-5 text-primary" /></div>
+                  <div>
+                    <p className="text-xs text-muted-foreground">Përdorues</p>
+                    <p className="text-xl font-bold">{userList.length}</p>
+                  </div>
+                </div>
+                <div className="bg-card border border-border rounded-xl p-4 flex items-center gap-3">
+                  <div className="p-2 bg-green-500/10 rounded-lg"><ShoppingBag className="h-5 w-5 text-green-600" /></div>
+                  <div>
+                    <p className="text-xs text-muted-foreground">Porosi Gjithsej</p>
+                    <p className="text-xl font-bold">{orders.length}</p>
+                  </div>
+                </div>
+                <div className="bg-card border border-border rounded-xl p-4 flex items-center gap-3">
+                  <div className="p-2 bg-yellow-500/10 rounded-lg"><TrendingUp className="h-5 w-5 text-yellow-600" /></div>
+                  <div>
+                    <p className="text-xs text-muted-foreground">Total të Ardhura</p>
+                    <p className="text-xl font-bold">{orders.reduce((s, o) => s + (o.total || 0), 0).toLocaleString()} Lekë</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Analytics chart */}
+              <div className="bg-card border border-border rounded-xl p-5 mb-8">
+                <div className="flex items-center gap-2 mb-4">
+                  <TrendingUp className="h-4 w-4 text-primary" />
+                  <h3 className="text-sm font-semibold">Porositë — 30 Ditë të Fundit</h3>
+                </div>
+                {loadingOrders ? (
+                  <div className="flex justify-center py-10"><Loader2 className="h-6 w-6 animate-spin text-primary" /></div>
+                ) : (
+                  <ResponsiveContainer width="100%" height={200}>
+                    <BarChart data={chartData} margin={{ top: 5, right: 10, left: -20, bottom: 5 }}>
+                      <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
+                      <XAxis dataKey="date" tick={{ fontSize: 10 }} interval={4} />
+                      <YAxis allowDecimals={false} tick={{ fontSize: 10 }} />
+                      <Tooltip
+                        contentStyle={{ fontSize: 12, borderRadius: 8 }}
+                        formatter={(v: number) => [v, "Porosi"]}
+                      />
+                      <Bar dataKey="porosi" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
+                    </BarChart>
+                  </ResponsiveContainer>
+                )}
+              </div>
+
+              {/* Users list */}
+              <div className="mb-4">
+                <h2 className="font-serif text-2xl font-bold text-gold">Përdoruesit & Porositë</h2>
+                <p className="text-sm text-muted-foreground">{userList.length} përdorues · {orders.length} porosi gjithsej</p>
+              </div>
+
+              {loadingOrders ? (
+                <div className="flex justify-center py-20"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>
+              ) : userList.length === 0 ? (
+                <div className="text-center py-20">
+                  <Users className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+                  <h3 className="font-serif text-xl font-semibold mb-2">Asnjë porosi akoma</h3>
+                  <p className="text-muted-foreground">Porositë do të shfaqen këtu pasi klientët të bëjnë porosi.</p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {userList.map(({ email, orders: userOrders, total }) => (
+                    <div key={email} className="bg-card border border-border rounded-xl overflow-hidden">
+                      <button
+                        className="w-full flex items-center gap-3 p-4 hover:bg-muted/30 transition-colors text-left"
+                        onClick={() => setExpandedUser(expandedUser === email ? null : email)}
+                      >
+                        <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                          <Users className="h-4 w-4 text-primary" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium truncate">{email}</p>
+                          <p className="text-xs text-muted-foreground">{userOrders.length} porosi · {total.toLocaleString()} Lekë gjithsej</p>
+                        </div>
+                        <span className="text-xs text-muted-foreground">{expandedUser === email ? "▲" : "▼"}</span>
+                      </button>
+
+                      <AnimatePresence>
+                        {expandedUser === email && (
+                          <motion.div
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: "auto", opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            transition={{ duration: 0.2 }}
+                            className="overflow-hidden"
+                          >
+                            <div className="border-t border-border/50 divide-y divide-border/30">
+                              {userOrders.map((order) => (
+                                <div key={order.id} className="px-4 py-3 bg-muted/20">
+                                  <div className="flex items-center justify-between mb-1.5">
+                                    <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                                      <Calendar className="h-3 w-3" />
+                                      {new Date(order.created_at).toLocaleString("sq-AL", {
+                                        day: "2-digit", month: "2-digit", year: "numeric",
+                                        hour: "2-digit", minute: "2-digit",
+                                      })}
+                                    </div>
+                                    <span className="text-xs font-bold text-primary">{order.total?.toLocaleString()} Lekë</span>
+                                  </div>
+                                  <div className="space-y-0.5">
+                                    {(order.items || []).map((item, i) => (
+                                      <div key={i} className="flex items-center justify-between text-xs">
+                                        <span className="text-foreground/80 truncate max-w-[200px]">{item.title}</span>
+                                        <span className="text-muted-foreground shrink-0 ml-2">x{item.quantity} · {(item.price * item.quantity).toLocaleString()} Lekë</span>
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </>
+          );
+        })()}
       </div>
     </div>
   );

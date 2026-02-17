@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Menu, X, ShoppingCart } from "lucide-react";
+import { Menu, X, ShoppingCart, LogOut, User } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { motion, AnimatePresence } from "framer-motion";
 import { useIsChildrenTheme } from "@/hooks/use-children-theme";
+import { Button } from "@/components/ui/button";
 
 const navLinks = [
   { to: "/", label: "Kreu" },
@@ -17,6 +19,7 @@ const Navbar = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { totalItems } = useCart();
+  const { user, signOut } = useAuth();
   const isChildrenTheme = useIsChildrenTheme();
 
   const handleNavClick = (to: string) => {
@@ -39,6 +42,12 @@ const Navbar = () => {
     }
   };
 
+  const handleSignOut = async () => {
+    setIsOpen(false);
+    await signOut();
+    navigate("/");
+  };
+
   return (
     <>
       <nav className={`fixed top-0 left-0 right-0 z-50 backdrop-blur-md border-b transition-colors duration-700 ${
@@ -56,7 +65,7 @@ const Navbar = () => {
             </span>
           </a>
 
-          {/* Desktop nav + cart grouped together */}
+          {/* Desktop nav + cart + auth buttons */}
           <div className="hidden md:flex items-center gap-8">
             {navLinks.map((link) => (
               <button
@@ -75,6 +84,7 @@ const Navbar = () => {
                 {link.label}
               </button>
             ))}
+
             <Link
               to="/shporta"
               className={`relative p-2 rounded-full transition-colors duration-200 ml-2 ${
@@ -95,6 +105,40 @@ const Navbar = () => {
                 </motion.span>
               )}
             </Link>
+
+            {/* Auth buttons */}
+            {user ? (
+              <div className="flex items-center gap-2 ml-1">
+                <span className={`text-xs truncate max-w-[120px] ${isChildrenTheme ? "text-purple-500" : "text-muted-foreground"}`}>
+                  {user.email}
+                </span>
+                <button
+                  onClick={handleSignOut}
+                  title="Dil"
+                  className={`p-2 rounded-full transition-colors duration-200 ${isChildrenTheme ? "hover:bg-purple-100 text-purple-500" : "hover:bg-muted text-muted-foreground hover:text-foreground"}`}
+                >
+                  <LogOut className="h-4 w-4" />
+                </button>
+              </div>
+            ) : (
+              <div className="flex items-center gap-2 ml-1">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => navigate("/hyr")}
+                  className={`text-sm font-medium ${isChildrenTheme ? "text-purple-600 hover:bg-purple-50" : ""}`}
+                >
+                  Hyr
+                </Button>
+                <Button
+                  size="sm"
+                  onClick={() => navigate("/regjistrohu")}
+                  className={`text-sm font-medium ${isChildrenTheme ? "bg-purple-500 hover:bg-purple-600 text-white" : ""}`}
+                >
+                  Regjistrohu
+                </Button>
+              </div>
+            )}
           </div>
 
           {/* Mobile: cart + hamburger */}
@@ -159,6 +203,46 @@ const Navbar = () => {
                     {link.label}
                   </button>
                 ))}
+
+                {/* Mobile auth */}
+                <div className={`border-t pt-3 mt-1 ${isChildrenTheme ? "border-purple-100" : "border-border/50"}`}>
+                  {user ? (
+                    <div className="flex flex-col gap-2">
+                      <div className={`flex items-center gap-2 px-3 py-1.5 text-xs ${isChildrenTheme ? "text-purple-500" : "text-muted-foreground"}`}>
+                        <User className="h-3.5 w-3.5" />
+                        <span className="truncate">{user.email}</span>
+                      </div>
+                      <button
+                        onClick={handleSignOut}
+                        className={`flex items-center gap-2 text-sm font-medium py-2 px-3 rounded-md transition-colors duration-200 text-left ${
+                          isChildrenTheme ? "text-purple-500 hover:bg-purple-50" : "text-muted-foreground hover:bg-muted"
+                        }`}
+                      >
+                        <LogOut className="h-4 w-4" />
+                        Dil
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="flex flex-col gap-2">
+                      <button
+                        onClick={() => { setIsOpen(false); navigate("/hyr"); }}
+                        className={`text-sm font-medium py-2 px-3 rounded-md transition-colors duration-200 text-left ${
+                          isChildrenTheme ? "text-purple-500 hover:bg-purple-50" : "text-muted-foreground hover:bg-muted"
+                        }`}
+                      >
+                        Hyr
+                      </button>
+                      <button
+                        onClick={() => { setIsOpen(false); navigate("/regjistrohu"); }}
+                        className={`text-sm font-medium py-2 px-3 rounded-md transition-colors duration-200 text-left ${
+                          isChildrenTheme ? "bg-purple-500 text-white" : "bg-primary text-primary-foreground"
+                        }`}
+                      >
+                        Regjistrohu
+                      </button>
+                    </div>
+                  )}
+                </div>
               </div>
             </motion.div>
           )}

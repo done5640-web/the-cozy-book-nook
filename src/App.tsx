@@ -15,6 +15,8 @@ import BookDetails from "./pages/BookDetails";
 import Cart from "./pages/Cart";
 import Contact from "./pages/Contact";
 import Login from "./pages/Login";
+import UserLogin from "./pages/UserLogin";
+import Register from "./pages/Register";
 import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
 
@@ -55,6 +57,8 @@ const App = () => (
               <Route path="/librat/:id" element={<BookDetails />} />
               <Route path="/shporta" element={<Cart />} />
               <Route path="/kontakt" element={<Contact />} />
+              <Route path="/hyr" element={<UserLogin />} />
+              <Route path="/regjistrohu" element={<Register />} />
               <Route path="/login" element={<Login />} />
               <Route path="/admin" element={<Admin />} />
               <Route path="*" element={<NotFound />} />

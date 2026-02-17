@@ -1,19 +1,41 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Trash2, Plus, Minus, ShoppingBag, ArrowLeft, MessageCircle } from "lucide-react";
+import { Trash2, Plus, Minus, ShoppingBag, ArrowLeft, MessageCircle, LogIn } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { discountedPrice } from "@/data/books";
+import { supabase } from "@/lib/supabase";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 
 const Cart = () => {
   const { items, removeFromCart, updateQuantity, totalPrice, clearCart } = useCart();
+  const { user } = useAuth();
+  const navigate = useNavigate();
 
-  const handleWhatsAppOrder = () => {
+  const handleWhatsAppOrder = async () => {
+    if (!user) {
+      navigate("/hyr");
+      return;
+    }
+
     const bookList = items
       .map((item) => `${item.book.title} (x${item.quantity})`)
       .join(", ");
+
+    // Save order to Supabase
+    await supabase.from("orders").insert([{
+      user_id: user.id,
+      user_email: user.email,
+      items: items.map((item) => ({
+        book_id: item.book.id,
+        title: item.book.title,
+        quantity: item.quantity,
+        price: discountedPrice(item.book),
+      })),
+      total: totalPrice,
+    }]);
 
     const message = encodeURIComponent(
       `Pershendetje, dua te porosis: ${bookList}. Totali: ${totalPrice} Lekë.`
@@ -125,13 +147,30 @@ const Cart = () => {
                   <span>{totalPrice} Lekë</span>
                 </div>
               </div>
-              <Button
-                className="w-full mb-3 gap-2 bg-green-700 hover:bg-green-800 text-white"
-                onClick={handleWhatsAppOrder}
-              >
-                <MessageCircle className="h-4 w-4" />
-                Porosit me WhatsApp
-              </Button>
+
+              {user ? (
+                <Button
+                  className="w-full mb-3 gap-2 bg-green-700 hover:bg-green-800 text-white"
+                  onClick={handleWhatsAppOrder}
+                >
+                  <MessageCircle className="h-4 w-4" />
+                  Porosit me WhatsApp
+                </Button>
+              ) : (
+                <div className="mb-3 space-y-2">
+                  <div className="text-xs text-muted-foreground text-center px-2">
+                    Duhet të hyni për të bërë porosi me WhatsApp
+                  </div>
+                  <Button
+                    className="w-full gap-2"
+                    onClick={() => navigate("/hyr")}
+                  >
+                    <LogIn className="h-4 w-4" />
+                    Hyr për të porositur
+                  </Button>
+                </div>
+              )}
+
               <Button variant="outline" className="w-full" onClick={clearCart}>Pastro Shportën</Button>
             </motion.div>
           </div>
