@@ -52,13 +52,18 @@ const Admin = () => {
 
   // Orders / users state
   const [orders, setOrders] = useState<DbOrder[]>([]);
+  const [profiles, setProfiles] = useState<{ id: string; email: string; created_at: string }[]>([]);
   const [loadingOrders, setLoadingOrders] = useState(true);
   const [expandedUser, setExpandedUser] = useState<string | null>(null);
 
   const fetchOrders = async () => {
     setLoadingOrders(true);
-    const { data } = await supabase.from("orders").select("*").order("created_at", { ascending: false });
-    if (data) setOrders(data as DbOrder[]);
+    const [{ data: orderData }, { data: profileData }] = await Promise.all([
+      supabase.from("orders").select("*").order("created_at", { ascending: false }),
+      supabase.from("profiles").select("*").order("created_at", { ascending: false }),
+    ]);
+    if (orderData) setOrders(orderData as DbOrder[]);
+    if (profileData) setProfiles(profileData);
     setLoadingOrders(false);
   };
 
@@ -643,18 +648,23 @@ const Admin = () => {
 
         {/* ======== USERS / ORDERS TAB ======== */}
         {tab === "users" && (() => {
-          // Group orders by user_email
-          const userMap = new Map<string, DbOrder[]>();
+          // Group orders by user_id
+          const orderMap = new Map<string, DbOrder[]>();
           for (const o of orders) {
-            const key = o.user_email || o.user_id;
-            if (!userMap.has(key)) userMap.set(key, []);
-            userMap.get(key)!.push(o);
+            const key = o.user_id;
+            if (!orderMap.has(key)) orderMap.set(key, []);
+            orderMap.get(key)!.push(o);
           }
-          const userList = Array.from(userMap.entries()).map(([email, userOrders]) => ({
-            email,
-            orders: userOrders,
-            total: userOrders.reduce((s, o) => s + (o.total || 0), 0),
-          })).sort((a, b) => b.orders.length - a.orders.length);
+          // Build userList from profiles (all registered users, even with 0 orders)
+          const userList = profiles.map((p) => {
+            const userOrders = orderMap.get(p.id) || [];
+            return {
+              email: p.email,
+              registeredAt: p.created_at,
+              orders: userOrders,
+              total: userOrders.reduce((s, o) => s + (o.total || 0), 0),
+            };
+          }).sort((a, b) => b.orders.length - a.orders.length);
 
           // Analytics: orders per day (last 30 days)
           const now = new Date();
@@ -735,8 +745,8 @@ const Admin = () => {
               ) : userList.length === 0 ? (
                 <div className="text-center py-20">
                   <Users className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-                  <h3 className="font-serif text-xl font-semibold mb-2">Asnjë porosi akoma</h3>
-                  <p className="text-muted-foreground">Porositë do të shfaqen këtu pasi klientët të bëjnë porosi.</p>
+                  <h3 className="font-serif text-xl font-semibold mb-2">Asnjë përdorues akoma</h3>
+                  <p className="text-muted-foreground">Përdoruesit do të shfaqen këtu pasi të regjistrohen.</p>
                 </div>
               ) : (
                 <div className="space-y-3">
@@ -751,7 +761,7 @@ const Admin = () => {
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="text-sm font-medium truncate">{email}</p>
-                          <p className="text-xs text-muted-foreground">{userOrders.length} porosi · {total.toLocaleString()} Lekë gjithsej</p>
+                          <p className="text-xs text-muted-foreground">{userOrders.length} porosi · {total > 0 ? `${total.toLocaleString()} Lekë gjithsej` : "Asnjë porosi akoma"}</p>
                         </div>
                         <span className="text-xs text-muted-foreground">{expandedUser === email ? "▲" : "▼"}</span>
                       </button>
