@@ -124,7 +124,7 @@ const Admin = () => {
     );
   }
 
-  if (!user) return <Navigate to="/login" replace />;
+  if (!user) return <Navigate to="/hyr" replace />;
   if (!isAdmin) return <Navigate to="/" replace />;
 
   // ---- Book handlers ----

@@ -14,7 +14,6 @@ import Books from "./pages/Books";
 import BookDetails from "./pages/BookDetails";
 import Cart from "./pages/Cart";
 import Contact from "./pages/Contact";
-import Login from "./pages/Login";
 import UserLogin from "./pages/UserLogin";
 import Register from "./pages/Register";
 import Admin from "./pages/Admin";
@@ -32,10 +31,10 @@ const ScrollToTop = () => {
   return null;
 };
 
-// Renders Navbar for all routes except admin and login
+// Renders Navbar for all routes except admin
 const AppNavbar = () => {
   const { pathname } = useLocation();
-  if (pathname === "/admin" || pathname === "/login") return null;
+  if (pathname === "/admin") return null;
   return <Navbar />;
 };
 
@@ -59,7 +58,6 @@ const App = () => (
               <Route path="/kontakt" element={<Contact />} />
               <Route path="/hyr" element={<UserLogin />} />
               <Route path="/regjistrohu" element={<Register />} />
-              <Route path="/login" element={<Login />} />
               <Route path="/admin" element={<Admin />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
