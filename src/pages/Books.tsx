@@ -291,7 +291,7 @@ const Books = () => {
   };
 
   return (
-    <div className={`min-h-screen transition-colors duration-700 relative overflow-x-hidden ${isChildrenTheme ? "bg-gradient-to-br from-[#FEF9EC] via-[#FDF0F8] to-[#EEF5FF]" : "bg-background"}`}>
+    <div className={`min-h-screen transition-colors duration-700 relative overflow-x-hidden ${isChildrenTheme ? "bg-gradient-to-br from-purple-100 via-violet-100 to-indigo-100" : "bg-background"}`}>
 
       {/* Magical transition overlay when entering children theme */}
       <AnimatePresence>
@@ -362,7 +362,7 @@ const Books = () => {
                 {selectedGenre}
               </h1>
 
-              <p className="text-base md:text-lg font-medium text-purple-100/400/80 tracking-wide">
+              <p className="text-base md:text-lg font-medium text-purple-800 tracking-wide">
                 Zbuloni botën magjike të librave
               </p>
 
@@ -419,7 +419,7 @@ const Books = () => {
               value={searchQuery}
               onChange={(e) => handleSearch(e.target.value)}
               placeholder="Kërko sipas titullit, autorit, shtëpisë botuese..."
-              className={`pl-10 pr-10 ${isChildrenTheme ? "border-purple-200 bg-white/90 focus-visible:ring-purple-300 rounded-xl shadow-sm" : "bg-card"}`}
+              className={`pl-10 pr-10 ${isChildrenTheme ? "border-purple-300 bg-purple-50 focus-visible:ring-purple-400 rounded-xl shadow-sm" : "bg-card"}`}
             />
             {searchQuery && (
               <button
@@ -473,7 +473,7 @@ const Books = () => {
             onChange={(e) => { setSortBy(e.target.value); setPage(1); }}
             className={`text-sm rounded-md px-3 py-2 ${
               isChildrenTheme
-                ? "bg-white border border-purple-200 text-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-300"
+                ? "bg-purple-50 border border-purple-300 text-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-400"
                 : "bg-card border border-border text-foreground"
             }`}
           >
@@ -497,7 +497,7 @@ const Books = () => {
                 className={`text-xs px-3 py-1.5 rounded-full border transition-colors ${
                   selectedSubcat === ""
                     ? isChildrenTheme ? "bg-purple-800 text-white border-purple-600" : "bg-primary text-primary-foreground border-primary"
-                    : isChildrenTheme ? "border-purple-400 text-purple-800 bg-white hover:bg-purple-100/40 hover:border-purple-600" : "border-border text-muted-foreground hover:border-primary/50 hover:text-foreground"
+                    : isChildrenTheme ? "border-purple-400 text-purple-800 bg-purple-50 hover:bg-purple-200 hover:border-purple-600" : "border-border text-muted-foreground hover:border-primary/50 hover:text-foreground"
                 }`}
               >
                 Të gjitha
@@ -509,7 +509,7 @@ const Books = () => {
                   className={`text-xs px-3 py-1.5 rounded-full border transition-colors ${
                     selectedSubcat === sub.name
                       ? isChildrenTheme ? "bg-purple-800 text-white border-purple-600" : "bg-primary text-primary-foreground border-primary"
-                      : isChildrenTheme ? "border-purple-400 text-purple-800 bg-white hover:bg-purple-100/40 hover:border-purple-600" : "border-border text-muted-foreground hover:border-primary/50 hover:text-foreground"
+                      : isChildrenTheme ? "border-purple-400 text-purple-800 bg-purple-50 hover:bg-purple-200 hover:border-purple-600" : "border-border text-muted-foreground hover:border-primary/50 hover:text-foreground"
                   }`}
                 >
                   {sub.name}

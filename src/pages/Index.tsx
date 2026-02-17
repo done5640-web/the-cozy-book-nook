@@ -164,7 +164,7 @@ const Index = () => {
                     </div>
                     <div className="flex items-center justify-between mt-4">
                       <span className="text-xs text-muted-foreground font-medium">{genreBookCount} libra</span>
-                      <ArrowRight className={`h-4 w-4 group-hover:translate-x-1 transition-all duration-300 ${isKids ? "text-purple-700 group-hover:text-purple-100/400" : "text-primary/40 group-hover:text-primary"}`} />
+                      <ArrowRight className={`h-4 w-4 group-hover:translate-x-1 transition-all duration-300 ${isKids ? "text-purple-700 group-hover:text-purple-900" : "text-primary/40 group-hover:text-primary"}`} />
                     </div>
                   </Link>
                 </motion.div>
