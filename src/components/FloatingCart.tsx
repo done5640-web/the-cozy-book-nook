@@ -18,7 +18,7 @@ const FloatingCart = () => {
         to="/shporta"
         className={`flex items-center justify-center w-14 h-14 rounded-full shadow-lg transition-all duration-700 hover:scale-105 active:scale-95 ${
           isChildrenTheme
-            ? "bg-gradient-to-br from-violet-500 to-purple-600 text-white shadow-purple-300/50"
+            ? "bg-gradient-to-br from-violet-600 to-purple-700 text-white shadow-purple-500/30"
             : "bg-primary text-primary-foreground shadow-primary/30"
         }`}
         aria-label="Shporta"

@@ -153,18 +153,18 @@ const Index = () => {
                     to={`/librat?genre=${cat.name}`}
                     className={`group flex flex-col justify-between h-full rounded-xl p-5 transition-all duration-300 hover:-translate-y-1 ${
                       isKids
-                        ? "bg-gradient-to-br from-purple-50 to-violet-50 border border-purple-200 hover:border-purple-400 hover:shadow-xl hover:shadow-purple-100/50"
+                        ? "bg-gradient-to-br from-purple-100/40 to-violet-50 border border-purple-200 hover:border-purple-600 hover:shadow-xl hover:shadow-purple-100/50"
                         : "bg-gradient-to-br from-background to-muted border border-border hover:border-primary/50 hover:shadow-xl hover:shadow-primary/10"
                     }`}
                   >
                     <div>
-                      <h3 className={`font-serif font-bold text-lg mb-2 transition-colors duration-300 ${isKids ? "text-purple-600 group-hover:text-purple-800" : "group-hover:text-primary"}`}>
+                      <h3 className={`font-serif font-bold text-lg mb-2 transition-colors duration-300 ${isKids ? "text-purple-800 group-hover:text-purple-800" : "group-hover:text-primary"}`}>
                         {cat.name}
                       </h3>
                     </div>
                     <div className="flex items-center justify-between mt-4">
                       <span className="text-xs text-muted-foreground font-medium">{genreBookCount} libra</span>
-                      <ArrowRight className={`h-4 w-4 group-hover:translate-x-1 transition-all duration-300 ${isKids ? "text-purple-300 group-hover:text-purple-500" : "text-primary/40 group-hover:text-primary"}`} />
+                      <ArrowRight className={`h-4 w-4 group-hover:translate-x-1 transition-all duration-300 ${isKids ? "text-purple-700 group-hover:text-purple-100/400" : "text-primary/40 group-hover:text-primary"}`} />
                     </div>
                   </Link>
                 </motion.div>

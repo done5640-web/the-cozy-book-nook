@@ -172,7 +172,7 @@ function KidsFilterButton({ label, isActive, onClick }: { label: string; isActiv
         className={`relative flex items-center gap-1 px-3 py-1 rounded-[5px] text-sm font-medium transition-colors ${
           isActive
             ? "bg-transparent text-white"
-            : "bg-white/90 text-purple-600 hover:bg-white"
+            : "bg-white/90 text-purple-800 hover:bg-white"
         }`}
       >
         {label}
@@ -337,7 +337,7 @@ const Books = () => {
                 transition={{ duration: 0.6, delay: 0.2 }}
               >
                 <div className="h-px w-16 bg-gradient-to-r from-transparent to-purple-300" />
-                <Sparkles className="h-5 w-5 text-purple-400" />
+                <Sparkles className="h-5 w-5 text-purple-800" />
                 <div className="h-px w-16 bg-gradient-to-l from-transparent to-purple-300" />
               </motion.div>
 
@@ -354,7 +354,7 @@ const Books = () => {
                 {selectedGenre}
               </h1>
 
-              <p className="text-base md:text-lg font-medium text-purple-500/80 tracking-wide">
+              <p className="text-base md:text-lg font-medium text-purple-100/400/80 tracking-wide">
                 Zbuloni botën magjike të librave
               </p>
 
@@ -482,14 +482,14 @@ const Books = () => {
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
-              className={`flex flex-wrap gap-2 mb-6 pl-2 border-l-2 ${isChildrenTheme ? "border-purple-300" : "border-primary/30"}`}
+              className={`flex flex-wrap gap-2 mb-6 pl-2 border-l-2 ${isChildrenTheme ? "border-purple-400" : "border-primary/30"}`}
             >
               <button
                 onClick={() => handleSubcat("")}
                 className={`text-xs px-3 py-1.5 rounded-full border transition-colors ${
                   selectedSubcat === ""
-                    ? isChildrenTheme ? "bg-purple-600 text-white border-purple-600" : "bg-primary text-primary-foreground border-primary"
-                    : isChildrenTheme ? "border-purple-300 text-purple-600 bg-white hover:bg-purple-50 hover:border-purple-400" : "border-border text-muted-foreground hover:border-primary/50 hover:text-foreground"
+                    ? isChildrenTheme ? "bg-purple-800 text-white border-purple-600" : "bg-primary text-primary-foreground border-primary"
+                    : isChildrenTheme ? "border-purple-400 text-purple-800 bg-white hover:bg-purple-100/40 hover:border-purple-600" : "border-border text-muted-foreground hover:border-primary/50 hover:text-foreground"
                 }`}
               >
                 Të gjitha
@@ -500,8 +500,8 @@ const Books = () => {
                   onClick={() => handleSubcat(sub.name)}
                   className={`text-xs px-3 py-1.5 rounded-full border transition-colors ${
                     selectedSubcat === sub.name
-                      ? isChildrenTheme ? "bg-purple-600 text-white border-purple-600" : "bg-primary text-primary-foreground border-primary"
-                      : isChildrenTheme ? "border-purple-300 text-purple-600 bg-white hover:bg-purple-50 hover:border-purple-400" : "border-border text-muted-foreground hover:border-primary/50 hover:text-foreground"
+                      ? isChildrenTheme ? "bg-purple-800 text-white border-purple-600" : "bg-primary text-primary-foreground border-primary"
+                      : isChildrenTheme ? "border-purple-400 text-purple-800 bg-white hover:bg-purple-100/40 hover:border-purple-600" : "border-border text-muted-foreground hover:border-primary/50 hover:text-foreground"
                   }`}
                 >
                   {sub.name}
@@ -549,8 +549,8 @@ const Books = () => {
           >
             {isChildrenTheme ? (
               <div>
-                <Sparkles className="h-12 w-12 text-purple-300 mx-auto mb-3" />
-                <p className="text-purple-400 font-medium text-lg">Nuk u gjetën libra. Provoni sërish!</p>
+                <Sparkles className="h-12 w-12 text-purple-700 mx-auto mb-3" />
+                <p className="text-purple-800 font-medium text-lg">Nuk u gjetën libra. Provoni sërish!</p>
               </div>
             ) : (
               <p className="text-muted-foreground">Nuk u gjetën libra për këtë kategori.</p>

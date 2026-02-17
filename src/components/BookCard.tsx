@@ -32,7 +32,7 @@ const BookCard = ({ book, childrenTheme = false }: BookCardProps) => {
       <motion.div
         whileHover={{ y: -6 }}
         transition={{ duration: 0.25, ease: "easeOut" }}
-        className="bg-white rounded-2xl overflow-hidden border border-purple-100 group hover:border-purple-300 hover:shadow-xl hover:shadow-purple-100/60 transition-all duration-300"
+        className="bg-white rounded-2xl overflow-hidden border border-purple-200/50 group hover:border-purple-600 hover:shadow-xl hover:shadow-purple-200/40 transition-all duration-300"
       >
         <Link to={`/librat/${book.id}`} onClick={handleLinkClick}>
           <div className="aspect-[2/3] overflow-hidden relative">
@@ -47,8 +47,8 @@ const BookCard = ({ book, childrenTheme = false }: BookCardProps) => {
         </Link>
         <div className="p-2.5 md:p-4">
           <Link to={`/librat/${book.id}`} onClick={handleLinkClick}>
-            <p className="text-xs text-purple-400 font-semibold mb-1">{book.genre}</p>
-            <h3 className="font-serif font-bold text-sm md:text-base mb-1 line-clamp-1 text-slate-700 group-hover:text-purple-600 transition-colors duration-200">
+            <p className="text-xs text-purple-800 font-semibold mb-1">{book.genre}</p>
+            <h3 className="font-serif font-bold text-sm md:text-base mb-1 line-clamp-1 text-slate-700 group-hover:text-purple-800 transition-colors duration-200">
               {book.title}
             </h3>
             <p className="text-xs md:text-sm text-slate-400 mb-2">{book.author}</p>
@@ -74,7 +74,7 @@ const BookCard = ({ book, childrenTheme = false }: BookCardProps) => {
                 className={`gap-0.5 md:gap-1 h-7 px-2 text-xs md:h-9 md:px-3 md:text-sm transition-all duration-300 ${
                   justAdded
                     ? "bg-green-500 hover:bg-green-500 border-green-500"
-                    : "bg-gradient-to-r from-violet-500 to-purple-600 border-0 hover:from-violet-600 hover:to-purple-700"
+                    : "bg-gradient-to-r from-violet-600 to-purple-700 border-0 hover:from-violet-700 hover:to-purple-800"
                 } text-white`}
               >
                 <AnimatePresence mode="wait" initial={false}>

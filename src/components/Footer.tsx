@@ -14,7 +14,7 @@ const Footer = () => {
   return (
     <footer className={`border-t mt-16 transition-colors duration-700 ${
       isChildrenTheme
-        ? "bg-white/80 border-purple-200/60"
+        ? "bg-white/80 border-purple-400/50"
         : "bg-card border-border"
     }`}>
       <div className="container mx-auto px-4 py-12">
@@ -23,18 +23,18 @@ const Footer = () => {
             <div className="flex items-center gap-3 mb-4">
               <img src="/logo-libraria.png" alt="Logo" decoding="async" className="h-9 w-auto" />
               <span className={`font-brand text-lg font-semibold tracking-wider uppercase transition-colors duration-700 ${
-                isChildrenTheme ? "text-purple-600" : "text-primary"
+                isChildrenTheme ? "text-purple-800" : "text-primary"
               }`}>
                 Stacioni i Librarisë
               </span>
             </div>
             <p className={`text-sm max-w-md mb-2 transition-colors duration-700 ${
-              isChildrenTheme ? "text-purple-400" : "text-muted-foreground"
+              isChildrenTheme ? "text-purple-800" : "text-muted-foreground"
             }`}>
               Libraria juaj online shqiptare. Librat më të mirë, direkt tek dera juaj.
             </p>
             <p className={`text-xs italic opacity-70 transition-colors duration-700 ${
-              isChildrenTheme ? "text-purple-400" : "text-muted-foreground"
+              isChildrenTheme ? "text-purple-800" : "text-muted-foreground"
             }`}>
               'Uncover a world of imagination'
             </p>
@@ -42,7 +42,7 @@ const Footer = () => {
 
           <div>
             <h4 className={`font-serif font-semibold mb-4 transition-colors duration-700 ${
-              isChildrenTheme ? "text-purple-600" : "text-gold"
+              isChildrenTheme ? "text-purple-800" : "text-gold"
             }`}>
               Lidhje të Shpejta
             </h4>
@@ -58,7 +58,7 @@ const Footer = () => {
                   to={link.to}
                   className={`text-sm transition-colors duration-200 ${
                     isChildrenTheme
-                      ? "text-purple-400 hover:text-purple-600"
+                      ? "text-purple-800 hover:text-purple-800"
                       : "text-muted-foreground hover:text-primary"
                   }`}
                 >
@@ -70,7 +70,7 @@ const Footer = () => {
 
           <div>
             <h4 className={`font-serif font-semibold mb-4 transition-colors duration-700 ${
-              isChildrenTheme ? "text-purple-600" : "text-gold"
+              isChildrenTheme ? "text-purple-800" : "text-gold"
             }`}>
               Na Ndiqni
             </h4>
@@ -89,7 +89,7 @@ const Footer = () => {
                   aria-label={label}
                   className={`p-2.5 rounded-lg transition-colors duration-200 ${
                     isChildrenTheme
-                      ? "bg-purple-50 text-purple-400 hover:bg-purple-500 hover:text-white"
+                      ? "bg-purple-100/40 text-purple-800 hover:bg-purple-100/400 hover:text-white"
                       : "bg-muted hover:bg-primary hover:text-primary-foreground"
                   }`}
                 >
@@ -101,10 +101,10 @@ const Footer = () => {
         </div>
 
         <div className={`border-t mt-8 pt-6 text-center transition-colors duration-700 ${
-          isChildrenTheme ? "border-purple-200/60" : "border-border"
+          isChildrenTheme ? "border-purple-400/50" : "border-border"
         }`}>
           <p className={`text-xs transition-colors duration-700 ${
-            isChildrenTheme ? "text-purple-300" : "text-muted-foreground"
+            isChildrenTheme ? "text-purple-700" : "text-muted-foreground"
           }`}>
             &copy; 2026 Stacioni i Librarisë. Të gjitha të drejtat e rezervuara.
           </p>

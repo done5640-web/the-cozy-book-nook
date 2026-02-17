@@ -134,7 +134,7 @@ const BookDetails = () => {
       <div className="container mx-auto px-4 py-8 relative z-10">
         <Link
           to="/librat"
-          className={`inline-flex items-center gap-2 text-sm mb-8 transition-colors duration-200 ${isChildrenTheme ? "text-purple-400 hover:text-purple-600" : "text-muted-foreground hover:text-primary"}`}
+          className={`inline-flex items-center gap-2 text-sm mb-8 transition-colors duration-200 ${isChildrenTheme ? "text-purple-800 hover:text-purple-800" : "text-muted-foreground hover:text-primary"}`}
         >
           <ArrowLeft className="h-4 w-4" /> Kthehu te Librat
         </Link>
@@ -150,7 +150,7 @@ const BookDetails = () => {
             <img
               src={book.cover}
               alt={book.title}
-              className={`max-h-[500px] object-cover ${isChildrenTheme ? "rounded-2xl shadow-2xl shadow-purple-200/60 border-2 border-purple-100" : "rounded-lg shadow-2xl"}`}
+              className={`max-h-[500px] object-cover ${isChildrenTheme ? "rounded-2xl shadow-2xl shadow-purple-200/60 border-2 border-purple-200/50" : "rounded-lg shadow-2xl"}`}
             />
           </motion.div>
 
@@ -163,8 +163,8 @@ const BookDetails = () => {
             {/* Genre label */}
             {isChildrenTheme ? (
               <div className="flex items-center gap-1.5 mb-2">
-                <Sparkles className="h-3.5 w-3.5 text-purple-400" />
-                <span className="text-purple-400 text-sm font-semibold">{book.genre}</span>
+                <Sparkles className="h-3.5 w-3.5 text-purple-800" />
+                <span className="text-purple-800 text-sm font-semibold">{book.genre}</span>
               </div>
             ) : (
               <span className="text-primary text-sm font-medium">{book.genre}</span>
@@ -173,7 +173,7 @@ const BookDetails = () => {
             <h1 className={`font-serif text-3xl md:text-4xl font-bold mt-2 mb-2 ${isChildrenTheme ? "text-slate-700" : ""}`}>
               {book.title}
             </h1>
-            <p className={`mb-4 ${isChildrenTheme ? "text-purple-400" : "text-muted-foreground"}`}>
+            <p className={`mb-4 ${isChildrenTheme ? "text-purple-800" : "text-muted-foreground"}`}>
               nga {book.author}
             </p>
 
@@ -183,22 +183,22 @@ const BookDetails = () => {
 
             {/* Extra book details */}
             {(book.publisher || book.pages || book.year) && (
-              <div className={`flex flex-wrap gap-x-6 gap-y-2 mb-6 text-sm p-4 rounded-xl ${isChildrenTheme ? "bg-white/60 border border-purple-100" : "bg-muted/30 border border-border/40 rounded-xl"}`}>
+              <div className={`flex flex-wrap gap-x-6 gap-y-2 mb-6 text-sm p-4 rounded-xl ${isChildrenTheme ? "bg-white/60 border border-purple-200/50" : "bg-muted/30 border border-border/40 rounded-xl"}`}>
                 {book.publisher && (
                   <div className="flex flex-col">
-                    <span className={`text-xs uppercase tracking-wide font-medium ${isChildrenTheme ? "text-purple-300" : "text-muted-foreground"}`}>Shtëpia Botuese</span>
+                    <span className={`text-xs uppercase tracking-wide font-medium ${isChildrenTheme ? "text-purple-700" : "text-muted-foreground"}`}>Shtëpia Botuese</span>
                     <span className={`font-medium ${isChildrenTheme ? "text-slate-600" : "text-foreground"}`}>{book.publisher}</span>
                   </div>
                 )}
                 {book.pages && (
                   <div className="flex flex-col">
-                    <span className={`text-xs uppercase tracking-wide font-medium ${isChildrenTheme ? "text-purple-300" : "text-muted-foreground"}`}>Faqe</span>
+                    <span className={`text-xs uppercase tracking-wide font-medium ${isChildrenTheme ? "text-purple-700" : "text-muted-foreground"}`}>Faqe</span>
                     <span className={`font-medium ${isChildrenTheme ? "text-slate-600" : "text-foreground"}`}>{book.pages}</span>
                   </div>
                 )}
                 {book.year && (
                   <div className="flex flex-col">
-                    <span className={`text-xs uppercase tracking-wide font-medium ${isChildrenTheme ? "text-purple-300" : "text-muted-foreground"}`}>Viti i Botimit</span>
+                    <span className={`text-xs uppercase tracking-wide font-medium ${isChildrenTheme ? "text-purple-700" : "text-muted-foreground"}`}>Viti i Botimit</span>
                     <span className={`font-medium ${isChildrenTheme ? "text-slate-600" : "text-foreground"}`}>{book.year}</span>
                   </div>
                 )}
@@ -218,7 +218,7 @@ const BookDetails = () => {
                         -{book.discount}%
                       </span>
                     </div>
-                    <span className={`text-base line-through ${isChildrenTheme ? "text-purple-300" : "text-muted-foreground"}`}>
+                    <span className={`text-base line-through ${isChildrenTheme ? "text-purple-700" : "text-muted-foreground"}`}>
                       {book.price} Lekë
                     </span>
                   </>
@@ -240,7 +240,7 @@ const BookDetails = () => {
                         ? "bg-green-500 hover:bg-green-500 border-0 text-white"
                         : "bg-green-600 hover:bg-green-600 border-green-600"
                       : isChildrenTheme
-                        ? "bg-gradient-to-r from-violet-500 to-purple-600 hover:from-violet-600 hover:to-purple-700 text-white border-0"
+                        ? "bg-gradient-to-r from-violet-600 to-purple-700 hover:from-violet-700 hover:to-purple-800 text-white border-0"
                         : ""
                   }`}
                 >
@@ -278,7 +278,7 @@ const BookDetails = () => {
         {/* Related books */}
         {relatedBooks.length > 0 && (
           <section className="mt-16">
-            <h2 className={`font-serif text-2xl font-bold mb-6 ${isChildrenTheme ? "text-purple-600" : "text-gold"}`}>
+            <h2 className={`font-serif text-2xl font-bold mb-6 ${isChildrenTheme ? "text-purple-800" : "text-gold"}`}>
               Libra të Ngjashëm
             </h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
