@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, ShoppingCart, Sparkles, Check } from "lucide-react";
@@ -97,6 +97,12 @@ const BookDetails = () => {
     ? (activeCategory ? activeCategory.is_children : (cachedMap[genreToCheck] ?? false))
     : false;
 
+  // Sync body background so overscroll bounce matches the theme
+  useEffect(() => {
+    document.body.style.backgroundColor = isChildrenTheme ? "rgb(237 233 254)" : "";
+    return () => { document.body.style.backgroundColor = ""; };
+  }, [isChildrenTheme]);
+
   const handleAddToCart = () => {
     if (!book || justAdded) return;
     addToCart(book);
@@ -106,7 +112,7 @@ const BookDetails = () => {
 
   if (!book) {
     return (
-      <div className={`min-h-screen transition-colors duration-700 ${isChildrenTheme ? "bg-gradient-to-br from-[#FEF9EC] via-[#FDF0F8] to-[#EEF5FF]" : "bg-background"}`}>
+      <div className={`min-h-screen transition-colors duration-700 ${isChildrenTheme ? "bg-gradient-to-br from-purple-100 via-violet-100 to-indigo-100" : "bg-background"}`}>
         <Navbar />
         <div className="container mx-auto px-4 py-20 text-center">
           <h1 className="font-serif text-2xl font-bold mb-4">Libri nuk u gjet</h1>
@@ -120,7 +126,7 @@ const BookDetails = () => {
   const relatedBooks = books.filter((b) => b.genre === book.genre && b.id !== book.id).slice(0, 4);
 
   return (
-    <div className={`min-h-screen relative overflow-x-hidden transition-colors duration-700 ${isChildrenTheme ? "bg-gradient-to-br from-[#FEF9EC] via-[#FDF0F8] to-[#EEF5FF]" : "bg-background"}`}>
+    <div className={`min-h-screen relative overflow-x-hidden transition-colors duration-700 ${isChildrenTheme ? "bg-gradient-to-br from-purple-100 via-violet-100 to-indigo-100" : "bg-background"}`}>
 
       {/* Floating shapes for children mode */}
       <AnimatePresence>

@@ -227,6 +227,12 @@ const Books = () => {
     prevIsChildrenRef.current = isChildrenTheme;
   }, [isChildrenTheme]);
 
+  // Sync body background so overscroll bounce matches the theme
+  useEffect(() => {
+    document.body.style.backgroundColor = isChildrenTheme ? "rgb(237 233 254)" : "";
+    return () => { document.body.style.backgroundColor = ""; };
+  }, [isChildrenTheme]);
+
   // Subcategories of selected genre
   const subcategories = activeCategory?.subcategories ?? [];
 
