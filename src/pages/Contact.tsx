@@ -7,13 +7,39 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 
+const WEB3FORMS_KEY = "2432a26b-5a65-496c-9abb-813332cfd867";
+
 const Contact = () => {
   const [sent, setSent] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setSent(true);
-    setTimeout(() => setSent(false), 3000);
+    setLoading(true);
+    setError("");
+
+    const formData = new FormData(e.currentTarget);
+    formData.append("access_key", WEB3FORMS_KEY);
+
+    try {
+      const res = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        body: formData,
+      });
+      const data = await res.json();
+      if (data.success) {
+        setSent(true);
+        (e.target as HTMLFormElement).reset();
+        setTimeout(() => setSent(false), 4000);
+      } else {
+        setError("Diçka shkoi keq. Provoni përsëri.");
+      }
+    } catch {
+      setError("Nuk u lidh me serverin. Provoni përsëri.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -53,14 +79,24 @@ const Contact = () => {
           >
             <h2 className="font-serif text-2xl font-bold mb-6 text-gold">Dërgoni një Mesazh</h2>
             <form onSubmit={handleSubmit} className="space-y-4">
-              <Input placeholder="Emri juaj" required className="bg-card border-border" />
-              <Input type="email" placeholder="Email-i juaj" required className="bg-card border-border" />
-              <Input placeholder="Subjekti" required className="bg-card border-border" />
-              <Textarea placeholder="Mesazhi juaj..." rows={5} required className="bg-card border-border" />
-              <Button type="submit" className="gap-2 w-full" disabled={sent}>
+              {/* honeypot */}
+              <input type="checkbox" name="botcheck" className="hidden" />
+
+              <Input name="name" placeholder="Emri juaj" required className="bg-card border-border" />
+              <Input name="email" type="email" placeholder="Email-i juaj" required className="bg-card border-border" />
+              <Input name="subject" placeholder="Subjekti" required className="bg-card border-border" />
+              <Textarea name="message" placeholder="Mesazhi juaj..." rows={5} required className="bg-card border-border" />
+
+              {error && <p className="text-sm text-red-400">{error}</p>}
+
+              <Button type="submit" className="gap-2 w-full" disabled={loading || sent}>
                 {sent ? (
                   <>
                     <CheckCircle className="h-4 w-4" /> U Dërgua!
+                  </>
+                ) : loading ? (
+                  <>
+                    <Send className="h-4 w-4 animate-pulse" /> Duke dërguar...
                   </>
                 ) : (
                   <>
@@ -89,7 +125,7 @@ const Contact = () => {
               <Mail className="h-5 w-5 text-primary mt-0.5 shrink-0" />
               <div>
                 <p className="font-medium text-sm">Email</p>
-                <p className="text-sm text-muted-foreground">info@stacioni-librarise.al</p>
+                <p className="text-sm text-muted-foreground">stacionilibrarise@gmail.com</p>
               </div>
             </div>
             <div className="flex gap-3 items-start">
