@@ -19,7 +19,7 @@ const Navbar = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { totalItems } = useCart();
-  const { user, signOut } = useAuth();
+  const { user, isAdmin, signOut } = useAuth();
   const isChildrenTheme = useIsChildrenTheme();
 
   const handleNavClick = (to: string) => {
@@ -84,6 +84,20 @@ const Navbar = () => {
                 {link.label}
               </button>
             ))}
+
+            {/* Admin Dashboard button (desktop) */}
+            {isAdmin && (
+              <button
+                onClick={() => navigate("/admin")}
+                className={`text-sm font-medium transition-colors duration-200 relative pb-1 ${
+                  isChildrenTheme
+                    ? "text-purple-700 hover:text-purple-900"
+                    : "text-muted-foreground hover:text-primary"
+                }`}
+              >
+                Admin Dashboard
+              </button>
+            )}
 
             <Link
               to="/shporta"
@@ -203,6 +217,20 @@ const Navbar = () => {
                     {link.label}
                   </button>
                 ))}
+
+                {/* Admin Dashboard button (mobile) */}
+                {isAdmin && (
+                  <button
+                    onClick={() => { setIsOpen(false); navigate("/admin"); }}
+                    className={`text-sm font-medium py-2 px-3 rounded-md transition-colors duration-200 text-left ${
+                      isChildrenTheme
+                        ? "text-purple-700 hover:bg-purple-200/50"
+                        : "text-muted-foreground hover:bg-muted"
+                    }`}
+                  >
+                    Admin Dashboard
+                  </button>
+                )}
 
                 {/* Mobile auth */}
                 <div className={`border-t pt-3 mt-1 ${isChildrenTheme ? "border-purple-300/50" : "border-border/50"}`}>

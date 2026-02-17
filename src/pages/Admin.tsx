@@ -47,7 +47,7 @@ interface DbCategory {
 }
 
 const Admin = () => {
-  const { user, loading: authLoading, signOut } = useAuth();
+  const { user, isAdmin, loading: authLoading, signOut } = useAuth();
   const [tab, setTab] = useState<"books" | "categories" | "users">("books");
 
   // Orders / users state
@@ -125,6 +125,7 @@ const Admin = () => {
   }
 
   if (!user) return <Navigate to="/login" replace />;
+  if (!isAdmin) return <Navigate to="/" replace />;
 
   // ---- Book handlers ----
   const handleSaveBook = async () => {
