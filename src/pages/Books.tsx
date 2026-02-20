@@ -200,6 +200,11 @@ const Books = () => {
     setSelectedSubcat(searchParams.get("subcat") || "");
     setSearchQuery(searchParams.get("q") || "");
     setPage(1);
+  // ── Scroll to top on page change ───────────────────────────────────────────
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [page]);
+
   }, [searchParams]);
 
   // ── Detect children theme ──────────────────────────────────────────────────
