@@ -7,6 +7,7 @@ import { discountedPrice } from "@/data/books";
 import { supabase } from "@/lib/supabase";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import SEO from "@/components/SEO";
 import { Button } from "@/components/ui/button";
 
 const Cart = () => {
@@ -25,6 +26,11 @@ const Cart = () => {
       .join(", ");
 
     // Save order to Supabase
+      <SEO
+        title="Shporta - Stacioni i Librarisë"
+        description="Shikoni librat tuaj të zgjedhur dhe përfundoni porosinë në Stacionin e Librarisë."
+        url="https://www.stacionilibrarise.al/shporta"
+      />
     await supabase.from("orders").insert([{
       user_id: user.id,
       user_email: user.email,

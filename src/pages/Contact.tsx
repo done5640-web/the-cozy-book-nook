@@ -4,6 +4,7 @@ import { Send, MapPin, Phone, Mail, CheckCircle } from "lucide-react";
 import { toast } from "sonner";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import SEO from "@/components/SEO";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -55,6 +56,11 @@ const Contact = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEO
+        title="Kontakt - Stacioni i Librarisë | Na Kontaktoni"
+        description="Kontaktoni Stacionin e Librarisë për çdo pyetje rreth porosive, librave apo dërgimit. Ju përgjigjemi shpejt në WhatsApp dhe email."
+        url="https://www.stacionilibrarise.al/kontakt"
+      />
       <Navbar />
 
       {/* Hero with background */}

@@ -5,6 +5,7 @@ import { useBooks } from "@/hooks/use-books";
 import { useCategories } from "@/hooks/use-categories";
 import BookCard from "@/components/BookCard";
 import Footer from "@/components/Footer";
+import SEO from "@/components/SEO";
 import { Button } from "@/components/ui/button";
 
 const fadeUp = {
@@ -22,6 +23,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEO />
 
       {/* Hero */}
       <section className="relative overflow-hidden min-h-[70vh] md:min-h-[80vh] flex items-center -mt-16 pt-16">

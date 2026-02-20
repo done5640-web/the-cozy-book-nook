@@ -5,6 +5,7 @@ import { Quote, ChevronLeft, ChevronRight } from "lucide-react";
 import { useBooks } from "@/hooks/use-books";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import SEO from "@/components/SEO";
 import { Button } from "@/components/ui/button";
 
 const BOOKS_PER_PAGE = 8;
@@ -17,6 +18,11 @@ const About = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEO
+        title="Rreth Nesh - Stacioni i Librarisë | Libraria Online Shqiptare"
+        description="Mësoni më shumë rreth Stacionit të Librarisë - libraria online shqiptare që ju sjell librat më të mirë direkt tek dera juaj. Porosi libra me WhatsApp."
+        url="https://www.stacionilibrarise.al/rreth-nesh"
+      />
       <Navbar />
 
       {/* Hero with background image */}

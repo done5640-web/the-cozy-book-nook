@@ -7,6 +7,7 @@ import { useCategories, getCachedChildrenMap } from "@/hooks/use-categories";
 import BookCard from "@/components/BookCard";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import SEO from "@/components/SEO";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -312,6 +313,12 @@ const Books = () => {
           <FloatingShape key={i} type={f.type} style={f.style} />
         ))}
       </AnimatePresence>
+
+      <SEO
+        title={`${selectedGenre === "Të gjitha" ? "Të gjitha librat" : selectedGenre} - Stacioni i Librarisë`}
+        description={`Shfletoni libra ${selectedGenre === "Të gjitha" ? "në të gjitha kategoritë" : `në kategorinë ${selectedGenre}`} në Stacionin e Librarisë. Libraria më e madhe online shqiptare.`}
+        url={`https://www.stacionilibrarise.al/librat${selectedGenre !== "Të gjitha" ? `?genre=${selectedGenre}` : ""}`}
+      />
 
       <Navbar />
 
