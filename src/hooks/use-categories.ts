@@ -17,8 +17,16 @@ export interface Category {
   subcategories: Category[];
 }
 
-// ── LocalStorage cache key ────────────────────────────────────────────────────
+// ── LocalStorage cache keys ──────────────────────────────────────────────────
 const LS_KEY = "cat_children_map";
+const CATEGORIES_CACHE_KEY = "categories_cache_v1";
+const CACHE_DURATION = 10 * 60 * 1000; // 10 minutes (categories change less often)
+
+interface CategoriesCache {
+  categories: string[];
+  categoryObjects: Category[];
+  timestamp: number;
+}
 
 /** Returns a map of { [categoryName]: is_children } from localStorage cache.
  *  This is available synchronously before Supabase responds. */
@@ -38,10 +46,41 @@ function saveChildrenMap(cats: Category[]) {
   } catch { /* ignore */ }
 }
 
+function getCachedCategories(): CategoriesCache | null {
+  try {
+    const raw = localStorage.getItem(CATEGORIES_CACHE_KEY);
+    if (!raw) return null;
+    const cache: CategoriesCache = JSON.parse(raw);
+    const age = Date.now() - cache.timestamp;
+    if (age > CACHE_DURATION) {
+      localStorage.removeItem(CATEGORIES_CACHE_KEY);
+      return null;
+    }
+    return cache;
+  } catch {
+    return null;
+  }
+}
+
+function setCachedCategories(categories: string[], categoryObjects: Category[]) {
+  try {
+    const cache: CategoriesCache = {
+      categories,
+      categoryObjects,
+      timestamp: Date.now(),
+    };
+    localStorage.setItem(CATEGORIES_CACHE_KEY, JSON.stringify(cache));
+  } catch {
+    // localStorage full or disabled
+  }
+}
+
 export function useCategories() {
-  const [categories, setCategories] = useState<string[]>([]);
-  const [categoryObjects, setCategoryObjects] = useState<Category[]>([]);
-  const [loading, setLoading] = useState(true);
+  // Start with cached data for instant display
+  const cachedData = getCachedCategories();
+  const [categories, setCategories] = useState<string[]>(cachedData?.categories || []);
+  const [categoryObjects, setCategoryObjects] = useState<Category[]>(cachedData?.categoryObjects || []);
+  const [loading, setLoading] = useState(!cachedData);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -72,12 +111,14 @@ export function useCategories() {
               })),
           }));
 
+          const categoryNames = topLevel.map((c) => c.name);
           setCategoryObjects(built);
-          setCategories(topLevel.map((c) => c.name));
-          saveChildrenMap(built); // persist for next reload
+          setCategories(categoryNames);
+          saveChildrenMap(built); // persist for theme detection
+          setCachedCategories(categoryNames, built); // full cache
         }
       } catch {
-        // Supabase not reachable
+        // Supabase not reachable - cached data already shown
       }
       setLoading(false);
     };
