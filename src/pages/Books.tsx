@@ -200,12 +200,12 @@ const Books = () => {
     setSelectedSubcat(searchParams.get("subcat") || "");
     setSearchQuery(searchParams.get("q") || "");
     setPage(1);
+  }, [searchParams]);
+
   // ── Scroll to top on page change ───────────────────────────────────────────
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [page]);
-
-  }, [searchParams]);
 
   // ── Detect children theme ──────────────────────────────────────────────────
   // Use cached map from localStorage so the correct theme is applied immediately
