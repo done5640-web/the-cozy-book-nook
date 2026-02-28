@@ -13,6 +13,7 @@ export interface Book {
   publisher?: string;  // Shtëpia botuese
   pages?: number;      // Numri i faqeve
   year?: number;       // Viti i botimit
+  perkthyesi?: string; // Përkthyesi
 }
 
 /** Returns the final price after discount */

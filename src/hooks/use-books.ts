@@ -19,6 +19,7 @@ interface DbBook {
   publisher?: string;
   pages?: number;
   year?: number;
+  perkthyesi?: string;
 }
 
 function dbToBook(db: DbBook): Book {
@@ -37,6 +38,7 @@ function dbToBook(db: DbBook): Book {
     publisher: db.publisher ?? undefined,
     pages: db.pages ?? undefined,
     year: db.year ?? undefined,
+    perkthyesi: db.perkthyesi ?? undefined,
   };
 }
 
@@ -93,7 +95,7 @@ export function useBooks() {
         // Optimized query: explicit field selection (faster than SELECT *)
         const { data, error } = await supabase
           .from("books")
-          .select("id, title, author, price, discount, genre, subcategory, description, rating, cover, featured, created_at, publisher, pages, year")
+          .select("id, title, author, price, discount, genre, subcategory, description, rating, cover, featured, created_at, publisher, pages, year, perkthyesi")
           .order("created_at", { ascending: false });
 
         if (!error && data) {

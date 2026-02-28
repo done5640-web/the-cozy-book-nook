@@ -36,6 +36,7 @@ interface DbBook {
   publisher?: string;
   pages?: number;
   year?: number;
+  perkthyesi?: string;
 }
 
 interface DbCategory {
@@ -132,7 +133,7 @@ const Admin = () => {
     if (!editingBook?.title || !editingBook?.author || !editingBook?.cover) return;
     setSavingBook(true);
     if (isNewBook) {
-      const { title, author, price, discount, genre, subcategory, description, cover, featured, publisher, pages, year } = editingBook;
+      const { title, author, price, discount, genre, subcategory, description, cover, featured, publisher, pages, year, perkthyesi } = editingBook;
       await supabase.from("books").insert([{
         title, author, price: price || 0, discount: discount || 0,
         genre: genre || (categories[0]?.name || ""),
@@ -141,6 +142,7 @@ const Admin = () => {
         publisher: publisher || null,
         pages: pages || null,
         year: year || null,
+        perkthyesi: perkthyesi || null,
       }]);
     } else {
       const { id, created_at, ...updates } = editingBook as DbBook;
@@ -321,7 +323,7 @@ const Admin = () => {
                 <h2 className="font-serif text-2xl font-bold text-gold">Menaxho Librat</h2>
                 <p className="text-sm text-muted-foreground">{books.length} libra gjithsej</p>
               </div>
-              <Button onClick={() => { setEditingBook({ title: "", author: "", price: 0, discount: 0, genre: catNames[0] || "", subcategory: "", description: "", cover: "", featured: false, publisher: "", pages: undefined, year: undefined }); setPriceInput(""); setDiscountInput(""); setPagesInput(""); setYearInput(""); setIsNewBook(true); }} className="gap-2">
+              <Button onClick={() => { setEditingBook({ title: "", author: "", price: 0, discount: 0, genre: catNames[0] || "", subcategory: "", description: "", cover: "", featured: false, publisher: "", pages: undefined, year: undefined, perkthyesi: "" }); setPriceInput(""); setDiscountInput(""); setPagesInput(""); setYearInput(""); setIsNewBook(true); }} className="gap-2">
                 <Plus className="h-4 w-4" /> Shto Libër
               </Button>
             </div>
@@ -350,6 +352,10 @@ const Admin = () => {
                       <div>
                         <label className="text-sm font-medium mb-1 block">Autori *</label>
                         <Input value={editingBook.author || ""} onChange={(e) => setEditingBook({ ...editingBook, author: e.target.value })} placeholder="Emri i autorit" className="bg-background" />
+                      </div>
+                      <div>
+                        <label className="text-sm font-medium mb-1 block">Përkthyesi</label>
+                        <Input value={editingBook.perkthyesi || ""} onChange={(e) => setEditingBook({ ...editingBook, perkthyesi: e.target.value })} placeholder="Emri i përkthyesit" className="bg-background" />
                       </div>
                       <div>
                         <label className="text-sm font-medium mb-1 block">Çmimi (Lekë)</label>

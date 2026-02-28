@@ -188,12 +188,18 @@ const BookDetails = () => {
             </p>
 
             {/* Extra book details */}
-            {(book.publisher || book.pages || book.year) && (
+            {(book.publisher || book.pages || book.year || book.perkthyesi) && (
               <div className={`flex flex-wrap gap-x-6 gap-y-2 mb-6 text-sm p-4 rounded-xl ${isChildrenTheme ? "bg-white/60 border border-purple-200/50" : "bg-muted/30 border border-border/40 rounded-xl"}`}>
                 {book.publisher && (
                   <div className="flex flex-col">
                     <span className={`text-xs uppercase tracking-wide font-medium ${isChildrenTheme ? "text-purple-700" : "text-muted-foreground"}`}>Shtëpia Botuese</span>
                     <span className={`font-medium ${isChildrenTheme ? "text-slate-600" : "text-foreground"}`}>{book.publisher}</span>
+                  </div>
+                )}
+                {book.perkthyesi && (
+                  <div className="flex flex-col">
+                    <span className={`text-xs uppercase tracking-wide font-medium ${isChildrenTheme ? "text-purple-700" : "text-muted-foreground"}`}>Përkthyesi</span>
+                    <span className={`font-medium ${isChildrenTheme ? "text-slate-600" : "text-foreground"}`}>{book.perkthyesi}</span>
                   </div>
                 )}
                 {book.pages && (
