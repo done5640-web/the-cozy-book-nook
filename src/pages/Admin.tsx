@@ -75,6 +75,7 @@ const Admin = () => {
   const [isNewBook, setIsNewBook] = useState(false);
   const [savingBook, setSavingBook] = useState(false);
   const [deletingBook, setDeletingBook] = useState<string | null>(null);
+  const [duplicateBook, setDuplicateBook] = useState<DbBook | null>(null);
   const [uploadingImage, setUploadingImage] = useState(false);
   const [priceInput, setPriceInput] = useState("");
   const [discountInput, setDiscountInput] = useState("");
@@ -129,8 +130,25 @@ const Admin = () => {
   if (!isAdmin) return <Navigate to="/" replace />;
 
   // ---- Book handlers ----
+  const normalizeTitle = (t: string) => t.trim().toLowerCase().normalize("NFC");
+
+  const handleSaveBookCheck = async () => {
+    if (!editingBook?.title || !editingBook?.author || !editingBook?.cover) return;
+    const normNew = normalizeTitle(editingBook.title);
+    const duplicate = books.find((b) => {
+      if (!isNewBook && (editingBook as DbBook).id === b.id) return false;
+      return normalizeTitle(b.title) === normNew;
+    });
+    if (duplicate) {
+      setDuplicateBook(duplicate);
+      return;
+    }
+    await handleSaveBook();
+  };
+
   const handleSaveBook = async () => {
     if (!editingBook?.title || !editingBook?.author || !editingBook?.cover) return;
+    setDuplicateBook(null);
     setSavingBook(true);
     if (isNewBook) {
       const { title, author, price, discount, genre, subcategory, description, cover, featured, publisher, pages, year, perkthyesi } = editingBook;
@@ -467,12 +485,38 @@ const Admin = () => {
                         </label>
                       </div>
                       <div className="flex gap-3 pt-2">
-                        <Button onClick={handleSaveBook} disabled={savingBook} className="flex-1 gap-2">
+                        <Button onClick={handleSaveBookCheck} disabled={savingBook} className="flex-1 gap-2">
                           {savingBook ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
                           {isNewBook ? "Shto" : "Ruaj"}
                         </Button>
                         <Button variant="outline" onClick={() => { setEditingBook(null); setIsNewBook(false); }}>Anulo</Button>
                       </div>
+                    </div>
+                  </motion.div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* Duplicate book confirmation dialog */}
+            <AnimatePresence>
+              {duplicateBook && (
+                <motion.div
+                  initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                  className="fixed inset-0 z-[60] bg-black/70 flex items-center justify-center px-4"
+                >
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}
+                    className="bg-card border border-border rounded-xl p-6 w-full max-w-sm shadow-xl"
+                  >
+                    <h3 className="font-serif text-lg font-bold mb-3">Libër ekzistues</h3>
+                    <p className="text-sm text-muted-foreground mb-5">
+                      Një libër me emrin <span className="font-semibold text-foreground">„{duplicateBook.title}"</span> ekziston. A dëshironi ta shtoni përsëri?
+                    </p>
+                    <div className="flex gap-3">
+                      <Button onClick={handleSaveBook} className="flex-1 gap-2">
+                        <Save className="h-4 w-4" /> Po, shto
+                      </Button>
+                      <Button variant="outline" onClick={() => setDuplicateBook(null)} className="flex-1">Jo, anulo</Button>
                     </div>
                   </motion.div>
                 </motion.div>
